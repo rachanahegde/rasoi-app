@@ -5,7 +5,6 @@ import {
   Home,
   BookOpen,
   Sparkles,
-  PlayCircle,
   Settings,
   Bell,
   Heart,
@@ -175,7 +174,6 @@ export default function App() {
           <NavItem icon={BookOpen} label="Recipes" active={view === 'recipes' || view === 'detail'} onClick={() => navigateTo('recipes')} />
           <NavItem icon={PenTool} label="Draft" active={view === 'generate'} onClick={() => navigateTo('generate')} highlight />
           <div className="h-px bg-stone-300 w-12 mx-auto my-2" />
-          <NavItem icon={PlayCircle} label="Watch" />
           <NavItem icon={CalendarIcon} label="Plan" />
         </nav>
 
