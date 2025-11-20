@@ -18,7 +18,7 @@ const RecipeDetail = ({
 
     return (
         <div className="max-w-4xl mx-auto animate-in zoom-in-95 duration-300 pb-20">
-            <Button variant="ghost" onClick={() => navigateTo('recipes')} className="mb-4 pl-0 hover:bg-transparent hover:text-orange-700 font-serif-custom italic">
+            <Button variant="ghost" onClick={() => navigateTo('recipes')} className="mb-4 pl-0 hover:bg-transparent hover:text-orange-700 font-serif italic">
                 <ArrowLeft className="w-4 h-4 mr-2" /> Back to Index
             </Button>
 
@@ -47,17 +47,17 @@ const RecipeDetail = ({
                         <div className="p-3 text-center border-r border-stone-200">
                             <Clock className="w-5 h-5 mx-auto mb-1 text-stone-500" />
                             <div className="text-[10px] text-stone-400 uppercase tracking-widest">Time</div>
-                            <div className="font-serif-custom font-bold text-stone-800">{recipe.time}</div>
+                            <div className="font-serif font-bold text-stone-800">{recipe.time}</div>
                         </div>
                         <div className="p-3 text-center border-r border-stone-200">
                             <Flame className="w-5 h-5 mx-auto mb-1 text-stone-500" />
                             <div className="text-[10px] text-stone-400 uppercase tracking-widest">Cals</div>
-                            <div className="font-serif-custom font-bold text-stone-800">{recipe.calories || '-'}</div>
+                            <div className="font-serif font-bold text-stone-800">{recipe.calories || '-'}</div>
                         </div>
                         <div className="p-3 text-center">
                             <ChefHat className="w-5 h-5 mx-auto mb-1 text-stone-500" />
                             <div className="text-[10px] text-stone-400 uppercase tracking-widest">Level</div>
-                            <div className="font-serif-custom font-bold text-stone-800">{recipe.difficulty}</div>
+                            <div className="font-serif font-bold text-stone-800">{recipe.difficulty}</div>
                         </div>
                     </div>
 
@@ -68,7 +68,7 @@ const RecipeDetail = ({
                         <div className="flex items-center gap-3">
                             <CalendarDays className="w-5 h-5 text-orange-200" />
                             <div className="text-sm">
-                                <div className="font-bold font-serif-custom">Schedule this meal</div>
+                                <div className="font-bold font-serif">Schedule this meal</div>
                                 <div className="text-stone-400 text-xs italic">For {selectedDate.toLocaleDateString()}</div>
                             </div>
                         </div>
@@ -83,7 +83,7 @@ const RecipeDetail = ({
 
                     <div className="pl-6">
                         <div className="flex justify-between items-start mb-4">
-                            <h1 className="text-4xl font-serif-custom font-bold text-stone-800 mb-2 underline decoration-orange-200 decoration-4 underline-offset-4">{recipe.title}</h1>
+                            <h1 className="text-4xl font-serif font-bold text-stone-800 mb-2 underline decoration-orange-200 decoration-4 underline-offset-4">{recipe.title}</h1>
                             <div className="flex gap-2">
                                 <Button variant="ghost" size="sm" onClick={() => navigateTo('edit', recipe.id)}>
                                     <Edit className="w-4 h-4" />
@@ -93,7 +93,7 @@ const RecipeDetail = ({
                                 </Button>
                             </div>
                         </div>
-                        <p className="text-stone-600 font-serif-custom italic leading-relaxed mb-4 text-lg">"{recipe.description}"</p>
+                        <p className="text-stone-600 font-serif italic leading-relaxed mb-4 text-lg">"{recipe.description}"</p>
                         <div className="flex gap-2 flex-wrap">
                             {recipe.tags.map(tag => (
                                 <Badge key={tag} className="bg-orange-50 text-orange-800 border border-orange-100 transform rotate-1">{tag}</Badge>
@@ -102,7 +102,7 @@ const RecipeDetail = ({
 
                         <Button
                             variant="outline"
-                            className="mt-8 w-full border-dashed border-stone-300 text-stone-500 hover:text-stone-800 hover:border-stone-400 group font-serif-custom"
+                            className="mt-8 w-full border-dashed border-stone-300 text-stone-500 hover:text-stone-800 hover:border-stone-400 group font-serif"
                             onClick={() => generateVariation(recipe)}
                         >
                             <Sparkles className="w-4 h-4 mr-2 text-orange-400 group-hover:scale-125 transition-transform" /> Brainstorm variations
@@ -110,12 +110,12 @@ const RecipeDetail = ({
                     </div>
 
                     <div className="pl-6 pt-4">
-                        <h3 className="text-xl font-serif-custom font-bold mb-4 flex items-center gap-2 text-stone-800 border-b border-stone-200 pb-2">
+                        <h3 className="text-xl font-serif font-bold mb-4 flex items-center gap-2 text-stone-800 border-b border-stone-200 pb-2">
                             <Utensils className="w-5 h-5 text-stone-400" /> Shopping List
                         </h3>
                         <ul className="space-y-3">
                             {recipe.ingredients.map((ing, i) => (
-                                <li key={i} className="flex items-center gap-3 text-stone-700 group font-serif-custom text-lg">
+                                <li key={i} className="flex items-center gap-3 text-stone-700 group font-serif text-lg">
                                     <div className="w-5 h-5 border-2 border-stone-300 rounded-sm group-hover:border-stone-800 flex items-center justify-center transition-colors cursor-pointer bg-white">
                                         <Check className="w-4 h-4 text-stone-800 opacity-0 group-hover:opacity-100 transition-opacity" />
                                     </div>
@@ -126,16 +126,16 @@ const RecipeDetail = ({
                     </div>
 
                     <div className="pl-6 pt-4">
-                        <h3 className="text-xl font-serif-custom font-bold mb-4 flex items-center gap-2 text-stone-800 border-b border-stone-200 pb-2">
+                        <h3 className="text-xl font-serif font-bold mb-4 flex items-center gap-2 text-stone-800 border-b border-stone-200 pb-2">
                             <BookOpen className="w-5 h-5 text-stone-400" /> Method
                         </h3>
                         <div className="space-y-6 relative border-l-2 border-stone-100 ml-3 pl-6">
                             {recipe.steps.map((step, i) => (
                                 <div key={i} className="relative">
-                                    <div className="absolute -left-[33px] top-0 w-6 h-6 rounded-full bg-stone-100 text-stone-500 border border-stone-200 flex items-center justify-center font-serif-custom font-bold text-sm shadow-sm">
+                                    <div className="absolute -left-[33px] top-0 w-6 h-6 rounded-full bg-stone-100 text-stone-500 border border-stone-200 flex items-center justify-center font-serif font-bold text-sm shadow-sm">
                                         {i + 1}
                                     </div>
-                                    <p className="text-stone-700 leading-relaxed font-serif-custom text-lg">{step}</p>
+                                    <p className="text-stone-700 leading-relaxed font-serif text-lg">{step}</p>
                                 </div>
                             ))}
                         </div>

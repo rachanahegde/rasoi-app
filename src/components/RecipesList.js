@@ -16,7 +16,7 @@ const RecipesList = ({
 }) => (
     <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-stone-200 pb-6">
-            <h2 className="text-3xl font-serif-custom font-bold text-stone-800">Recipe Index</h2>
+            <h2 className="text-3xl font-serif font-bold text-stone-800">Recipe Index</h2>
             <div className="flex flex-wrap gap-3 w-full md:w-auto items-center">
                 {/* Search Bar - Logbook style */}
                 <div className="relative flex-1 md:w-64">
@@ -70,7 +70,7 @@ const RecipesList = ({
                             <img src={recipe.image} className="w-20 h-20 rounded-lg object-cover sepia-[.15]" alt="thumb" />
                             <div className="flex-1">
                                 <div className="flex justify-between items-start">
-                                    <h3 className="font-serif-custom font-bold text-lg text-stone-800">{recipe.title}</h3>
+                                    <h3 className="font-serif font-bold text-lg text-stone-800">{recipe.title}</h3>
                                     <button
                                         onClick={(e) => toggleFavorite(e, recipe.id)}
                                         className={`p-2 hover:bg-stone-100 rounded-full ${recipe.favorite ? 'text-red-500' : 'text-stone-300'}`}
@@ -78,7 +78,7 @@ const RecipesList = ({
                                         <Heart className={`w-5 h-5 ${recipe.favorite ? 'fill-current' : ''}`} />
                                     </button>
                                 </div>
-                                <p className="text-sm text-stone-500 line-clamp-1 mb-2 font-serif-custom italic">{recipe.description}</p>
+                                <p className="text-sm text-stone-500 line-clamp-1 mb-2 font-serif italic">{recipe.description}</p>
                                 <div className="flex items-center gap-4 text-xs font-medium text-stone-500">
                                     <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {recipe.time}</span>
                                     <span className="flex items-center gap-1"><Flame className="w-3 h-3" /> {recipe.calories || 'N/A'}</span>
@@ -94,8 +94,8 @@ const RecipesList = ({
                 <div className="bg-stone-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-dashed border-stone-200">
                     <Search className="w-8 h-8 text-stone-400" />
                 </div>
-                <h3 className="text-xl font-serif-custom text-stone-800">Page empty</h3>
-                <p className="text-stone-500 font-serif-custom italic">No recipes found matching that description.</p>
+                <h3 className="text-xl font-serif text-stone-800">Page empty</h3>
+                <p className="text-stone-500 font-serif italic">No recipes found matching that description.</p>
             </div>
         )}
     </div>

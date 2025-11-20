@@ -27,7 +27,7 @@ const RecipeCard = ({ recipe, onClick, onToggleFav }) => (
 
         <div className="px-2">
             <div className="flex justify-between items-start mb-3">
-                <h3 className="font-serif-custom font-bold text-lg leading-snug text-stone-800 line-clamp-2">{recipe.title}</h3>
+                <h3 className="font-serif font-bold text-lg leading-snug text-stone-800 line-clamp-2">{recipe.title}</h3>
             </div>
             <div className="flex flex-wrap gap-2">
                 {recipe.tags.slice(0, 2).map(tag => (

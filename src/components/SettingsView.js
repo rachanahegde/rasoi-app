@@ -13,10 +13,10 @@ const SettingsView = ({ recipes, mealPlan, handleImportData }) => {
     return (
         <div className="max-w-2xl mx-auto animate-in fade-in duration-500 space-y-8 pb-20">
             <div className="border-b border-stone-200 pb-4">
-                <h2 className="text-3xl font-serif-custom font-bold mb-2 text-stone-800">Notebook Settings</h2>
+                <h2 className="text-3xl font-serif font-bold mb-2 text-stone-800">Notebook Settings</h2>
             </div>
             <Card className="p-8 bg-white">
-                <h3 className="text-xl font-bold font-serif-custom mb-4 flex items-center gap-2 text-stone-800">
+                <h3 className="text-xl font-bold font-serif mb-4 flex items-center gap-2 text-stone-800">
                     <Download className="w-5 h-5" /> Backup Notes
                 </h3>
                 <div className="relative">
@@ -31,7 +31,7 @@ const SettingsView = ({ recipes, mealPlan, handleImportData }) => {
                 </div>
             </Card>
             <Card className="p-8 bg-white">
-                <h3 className="text-xl font-bold font-serif-custom mb-4 flex items-center gap-2 text-stone-800">
+                <h3 className="text-xl font-bold font-serif mb-4 flex items-center gap-2 text-stone-800">
                     <Upload className="w-5 h-5" /> Restore Notes
                 </h3>
                 <textarea

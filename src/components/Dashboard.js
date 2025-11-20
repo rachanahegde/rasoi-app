@@ -30,10 +30,10 @@ const Dashboard = ({
             {/* Header - Handwritten Style */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-6 border-b-2 border-dashed border-stone-300">
                 <div>
-                    <div className="flex items-center gap-2 text-stone-500 mb-1 font-medium font-serif-custom italic">
+                    <div className="flex items-center gap-2 text-stone-500 mb-1 font-medium font-serif italic">
                         <span>Good morning, Chef</span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-serif-custom text-stone-800 leading-tight">
+                    <h1 className="text-4xl md:text-5xl font-serif text-stone-800 leading-tight">
                         <span className="text-stone-400 font-light">Today's</span> <br />
                         Kitchen Notes
                     </h1>
@@ -57,11 +57,11 @@ const Dashboard = ({
 
                         <div className="pl-12 pr-6 py-6 h-full flex flex-col">
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="font-serif-custom font-bold text-xl text-stone-800 flex items-center gap-2">
+                                <h3 className="font-serif font-bold text-xl text-stone-800 flex items-center gap-2">
                                     <CalendarDays className="w-5 h-5 text-stone-600" />
                                     Weekly Log
                                 </h3>
-                                <div className="text-xs font-serif-custom italic text-stone-500">{selectedDate.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}</div>
+                                <div className="text-xs font-serif italic text-stone-500">{selectedDate.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}</div>
                             </div>
 
                             {/* Date Grid */}
@@ -79,7 +79,7 @@ const Dashboard = ({
                                             key={i}
                                             onClick={() => setSelectedDate(d)}
                                             className={`
-                            h-10 w-full flex flex-col items-center justify-center rounded-md text-sm font-serif-custom transition-all cursor-pointer relative
+                            h-10 w-full flex flex-col items-center justify-center rounded-md text-sm font-serif transition-all cursor-pointer relative
                             ${isSelected ? 'bg-stone-800 text-[#FDFCF8] shadow-md z-10' : 'text-stone-600 hover:bg-stone-100'}
                             ${isToday && !isSelected ? 'border border-stone-300' : ''}
                           `}
@@ -103,7 +103,7 @@ const Dashboard = ({
                                         return (
                                             <div key={idx} className="group relative pl-6 py-2 cursor-pointer" onClick={() => navigateTo('detail', r.id)}>
                                                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-full bg-stone-200 group-hover:bg-orange-300 transition-colors rounded-full"></div>
-                                                <div className="font-serif-custom font-medium text-stone-800 group-hover:text-orange-800 transition-colors">{r.title}</div>
+                                                <div className="font-serif font-medium text-stone-800 group-hover:text-orange-800 transition-colors">{r.title}</div>
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); removeFromMealPlan(selectedDateKey, recipeId); }}
                                                     className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-stone-400 hover:text-red-400 transition-opacity"
@@ -114,7 +114,7 @@ const Dashboard = ({
                                         );
                                     })
                                 ) : (
-                                    <div className="py-4 text-stone-400 text-sm font-serif-custom italic border-2 border-dashed border-stone-100 rounded-lg text-center bg-stone-50/50">
+                                    <div className="py-4 text-stone-400 text-sm font-serif italic border-2 border-dashed border-stone-100 rounded-lg text-center bg-stone-50/50">
                                         Empty page...
                                     </div>
                                 )}
@@ -131,7 +131,7 @@ const Dashboard = ({
                             <div className="absolute inset-0 bg-gradient-to-t from-orange-900/20 to-transparent"></div>
                         </div>
                         <div className="text-center">
-                            <span className="font-serif-custom font-bold text-lg text-stone-800">Summer Grilling</span>
+                            <span className="font-serif font-bold text-lg text-stone-800">Summer Grilling</span>
                             <div className="h-1 w-12 bg-orange-200 mx-auto mt-1"></div>
                         </div>
                     </div>
@@ -141,7 +141,7 @@ const Dashboard = ({
                             <img src="https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=300&q=80" className="w-full h-full object-cover sepia-[.2]" alt="Roasting" />
                         </div>
                         <div className="text-center">
-                            <span className="font-serif-custom font-bold text-lg text-stone-800">Slow Roasts</span>
+                            <span className="font-serif font-bold text-lg text-stone-800">Slow Roasts</span>
                             <div className="h-1 w-12 bg-stone-300 mx-auto mt-1"></div>
                         </div>
                     </div>
@@ -151,7 +151,7 @@ const Dashboard = ({
                             <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=300&q=80" className="w-full h-full object-cover sepia-[.2]" alt="Baking" />
                         </div>
                         <div className="text-center">
-                            <span className="font-serif-custom font-bold text-lg text-stone-800">Sweet Treats</span>
+                            <span className="font-serif font-bold text-lg text-stone-800">Sweet Treats</span>
                             <div className="h-1 w-12 bg-blue-200 mx-auto mt-1"></div>
                         </div>
                     </div>
@@ -160,16 +160,16 @@ const Dashboard = ({
                 {/* Favorites */}
                 <div className="lg:col-span-12 mt-4">
                     <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-2xl font-serif-custom font-bold text-stone-800 flex items-center gap-2">
+                        <h3 className="text-2xl font-serif font-bold text-stone-800 flex items-center gap-2">
                             <Heart className="w-5 h-5 text-red-400 fill-red-400" /> Loved Recipes
                         </h3>
-                        <Button variant="ghost" onClick={() => navigateTo('recipes')} className="font-serif-custom italic">View All Index <ChevronRight className="w-4 h-4 ml-1" /></Button>
+                        <Button variant="ghost" onClick={() => navigateTo('recipes')} className="font-serif italic">View All Index <ChevronRight className="w-4 h-4 ml-1" /></Button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {favoriteRecipes.length > 0 ? favoriteRecipes.slice(0, 3).map(recipe => (
                             <RecipeCard key={recipe.id} recipe={recipe} onClick={() => navigateTo('detail', recipe.id)} onToggleFav={toggleFavorite} />
                         )) : (
-                            <div className="col-span-full text-center py-12 bg-stone-50/50 rounded-xl border-2 border-dashed border-stone-200 text-stone-400 font-serif-custom italic">
+                            <div className="col-span-full text-center py-12 bg-stone-50/50 rounded-xl border-2 border-dashed border-stone-200 text-stone-400 font-serif italic">
                                 No favorites marked yet.
                             </div>
                         )}

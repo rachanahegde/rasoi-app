@@ -1,14 +1,11 @@
 import React from 'react';
 
 const DottedBackground = () => (
-    <style>{`
+  <style>{`
     .bg-dot-pattern {
       background-color: #FDFCF8;
       background-image: radial-gradient(#D6D3D1 1.5px, transparent 1.5px);
       background-size: 24px 24px;
-    }
-    .font-serif-custom {
-      font-family: 'Georgia', 'Cambria', 'Times New Roman', serif;
     }
     .notebook-shadow {
       box-shadow: 3px 3px 0px 0px #E7E5E4; 
