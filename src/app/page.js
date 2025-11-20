@@ -21,6 +21,7 @@ import RecipeDetail from '@/components/RecipeDetail';
 import RecipeForm from '@/components/RecipeForm';
 import GeneratorPage from '@/components/GeneratorPage';
 import SettingsView from '@/components/SettingsView';
+import CalendarPage from '@/components/CalendarPage';
 
 import { INITIAL_RECIPES } from '@/lib/data';
 import { generateId } from '@/lib/helpers';
@@ -174,7 +175,7 @@ export default function App() {
           <NavItem icon={BookOpen} label="Recipes" active={view === 'recipes' || view === 'detail'} onClick={() => navigateTo('recipes')} />
           <NavItem icon={PenTool} label="Draft" active={view === 'generate'} onClick={() => navigateTo('generate')} highlight />
           <div className="h-px bg-stone-300 w-12 mx-auto my-2" />
-          <NavItem icon={CalendarIcon} label="Plan" />
+          <NavItem icon={CalendarIcon} label="Plan" active={view === 'calendar'} onClick={() => navigateTo('calendar')} />
         </nav>
 
         <div className="flex flex-col gap-6 mt-auto">
@@ -264,6 +265,14 @@ export default function App() {
             recipes={recipes}
             mealPlan={mealPlan}
             handleImportData={handleImportData}
+          />
+        )}
+        {view === 'calendar' && (
+          <CalendarPage
+            recipes={recipes}
+            mealPlan={mealPlan}
+            setMealPlan={setMealPlan}
+            navigateTo={navigateTo}
           />
         )}
       </main>
