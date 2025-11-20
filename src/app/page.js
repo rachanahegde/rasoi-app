@@ -93,8 +93,9 @@ export default function App() {
     setRecipes(prev => prev.map(r => r.id === id ? { ...r, favorite: !r.favorite } : r));
   };
 
-  const addToMealPlan = (recipeId) => {
-    const dateKey = selectedDate.toDateString();
+  const addToMealPlan = (recipeId, date = null) => {
+    const targetDate = date || selectedDate;
+    const dateKey = targetDate.toDateString();
     setMealPlan(prev => ({
       ...prev,
       [dateKey]: prev[dateKey] ? [...prev[dateKey], recipeId] : [recipeId]
@@ -212,6 +213,7 @@ export default function App() {
             navigateTo={navigateTo}
             toggleFavorite={toggleFavorite}
             removeFromMealPlan={removeFromMealPlan}
+            addToMealPlan={addToMealPlan}
             setSearchQuery={setSearchQuery}
           />
         )}
