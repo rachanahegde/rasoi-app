@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Rasoi is a modern web app for saving, organizing, and generating recipes—designed with a warm, analog-inspired aesthetic.
 
-## Getting Started
+🌿 ✨ Features (COMING SOON...)
+📝 Notebook-inspired UI
+A warm, personal design that mimics the feel of a handwritten cookbook.
 
-First, run the development server:
+🍲 Recipe Management
+Create, edit, and save your recipes
+Organize ingredients, steps, tags, categories
+Add notes, tips, and sub-sections
+Visual recipe cards with a cozy, minimal layout
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+✨ AI-Assisted Recipe Generation
+Ability to generate recipe ideas
+Variation generation (“Make this spicier”, “Give me a quicker version”, etc.)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+🗂️ Smart Organization Tools
+Search recipes by title, ingredients, tags
+Sorting by alphabetical, newest, or most used
+Tag-based filtering
+Optional calendar tile for meal planning (MVP or future feature)
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+💾 Local Storage Persistence and Database Integration
+Recipes, preferences, and UI state saved automatically
+Works offline for personal use
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+🎛️ Aesthetic UX Enhancements
+Smooth micro-animations
+Responsive layout optimized for desktop and mobile
 
-## Learn More
+🧰 Tech Stack
+Frontend
+- Next.js — App Router, server/client rendering
+- React — component-based UI
+- Tailwind CSS — utility-first styling
+shadcn/ui — accessible, elegant components
+Lucide React — minimalist icon set
 
-To learn more about Next.js, take a look at the following resources:
+State & Data
+- Local state (React)
+- Browser localStorage for persistence
+- Database and API integration
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+AI Capability (Planned)
+Abstraction layer for plugging in: Google Gemini, OpenAI GPT, Llama / Local inference
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Build & Deploy: Vercel
 
-## Deploy on Vercel
+🧪 Current Status: MVP
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Rasoi currently focuses on UI/UX, recipe creation, and local functionality. AI generation is mocked but wired into a clean UI flow. The structure is ready for future backend, user accounts, and real AI integrations.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+🌱 Roadmap
+- Real AI-powered recipe generation
+- Cloud sync & user accounts
+- Recipe image uploads
+- Meal planning calendar
+- Pantry management
+- Import/export JSON
+- Bookmarking & favorites
+
+🍛 Why “Rasoi”?
+Rasoi is derived from the Sanskrit/Hindi word for kitchen — the heart of home cooking. The app embodies that same warmth: personal, welcoming, and crafted for everyday use.
