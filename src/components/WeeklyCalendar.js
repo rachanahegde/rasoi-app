@@ -77,7 +77,7 @@ const WeeklyCalendar = ({
                 `}
                             >
                                 {d.getDate()}
-                                {hasPlan && !isSelected && <div className="w-1 h-1 rounded-full bg-orange-400 mt-1" />}
+                                {hasPlan && !isSelected && <div className="w-1 h-1 rounded-full bg-[#6f1d1b] mt-1" />}
                             </div>
                         )
                     })}
@@ -97,7 +97,7 @@ const WeeklyCalendar = ({
                             return (
                                 <div key={idx} className="group relative pl-2 py-2 cursor-pointer border-b border-stone-50 last:border-0 hover:bg-stone-50 rounded-md transition-colors" onClick={() => navigateTo('detail', r.id)}>
                                     <div className="flex justify-between items-center">
-                                        <div className="font-serif font-medium text-stone-800 group-hover:text-orange-800 transition-colors truncate pr-6">
+                                        <div className="font-serif font-medium text-stone-800 group-hover:text-[#6f1d1b] transition-colors truncate pr-6">
                                             {r.title}
                                         </div>
                                         <button
@@ -124,10 +124,10 @@ const WeeklyCalendar = ({
                                 <div
                                     key={recipe.id}
                                     onClick={() => onAddRecipe(selectedDate, recipe.id)}
-                                    className="flex items-center justify-between p-2 rounded-md border border-stone-100 hover:border-orange-200 hover:bg-orange-50 cursor-pointer transition-colors group"
+                                    className="flex items-center justify-between p-2 rounded-md border border-stone-100 hover:border-[#6f1d1b]/20 hover:bg-[#6f1d1b]/5 cursor-pointer transition-colors group"
                                 >
                                     <span className="text-xs font-medium text-stone-700 truncate">{recipe.title}</span>
-                                    <Plus className="w-3.5 h-3.5 text-stone-300 group-hover:text-orange-500" />
+                                    <Plus className="w-3.5 h-3.5 text-stone-300 group-hover:text-[#6f1d1b]" />
                                 </div>
                             ))}
                             {recipes.filter(r => r.favorite).length === 0 && (

@@ -3,6 +3,8 @@ import { Sparkles, CalendarDays, X, Heart, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import RecipeCard from '@/components/RecipeCard';
 import WeeklyCalendar from '@/components/WeeklyCalendar';
+import RecentlyCooked from '@/components/RecentlyCooked';
+import MealPrepSuggestions from '@/components/MealPrepSuggestions';
 
 const Dashboard = ({
     recipes,
@@ -67,38 +69,20 @@ const Dashboard = ({
                     />
                 </div>
 
-                {/* Inspiration Cards - Polaroid / Sticker Style */}
-                <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div onClick={() => { setSearchQuery('Summer'); navigateTo('recipes'); }} className="cursor-pointer bg-white p-3 rounded-xl shadow-sm rotate-[-1deg] hover:rotate-0 transition-transform duration-300 border border-stone-100">
-                        <div className="bg-orange-50 rounded-lg overflow-hidden aspect-square mb-3 relative">
-                            <img src="https://images.unsplash.com/photo-1544025162-d76690b67f61?auto=format&fit=crop&w=300&q=80" className="w-full h-full object-cover sepia-[.2]" alt="Grilling" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-orange-900/20 to-transparent"></div>
-                        </div>
-                        <div className="text-center">
-                            <span className="font-serif font-bold text-lg text-stone-800">Summer Grilling</span>
-                            <div className="h-1 w-12 bg-orange-200 mx-auto mt-1"></div>
-                        </div>
-                    </div>
+                {/* Widgets Column */}
+                <div className="lg:col-span-8 flex flex-col gap-8">
+                    <RecentlyCooked
+                        recipes={recipes}
+                        mealPlan={mealPlan}
+                        onCookAgain={(id) => addToMealPlan(id, selectedDate)}
+                        navigateTo={navigateTo}
+                    />
 
-                    <div onClick={() => { setSearchQuery('Cozy'); navigateTo('recipes'); }} className="cursor-pointer bg-white p-3 rounded-xl shadow-sm rotate-[1deg] hover:rotate-0 transition-transform duration-300 border border-stone-100">
-                        <div className="bg-stone-100 rounded-lg overflow-hidden aspect-square mb-3 relative">
-                            <img src="https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=300&q=80" className="w-full h-full object-cover sepia-[.2]" alt="Roasting" />
-                        </div>
-                        <div className="text-center">
-                            <span className="font-serif font-bold text-lg text-stone-800">Slow Roasts</span>
-                            <div className="h-1 w-12 bg-stone-300 mx-auto mt-1"></div>
-                        </div>
-                    </div>
-
-                    <div onClick={() => { setSearchQuery('Sweet'); navigateTo('recipes'); }} className="cursor-pointer bg-white p-3 rounded-xl shadow-sm rotate-[-2deg] hover:rotate-0 transition-transform duration-300 border border-stone-100">
-                        <div className="bg-blue-50 rounded-lg overflow-hidden aspect-square mb-3 relative">
-                            <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=300&q=80" className="w-full h-full object-cover sepia-[.2]" alt="Baking" />
-                        </div>
-                        <div className="text-center">
-                            <span className="font-serif font-bold text-lg text-stone-800">Sweet Treats</span>
-                            <div className="h-1 w-12 bg-blue-200 mx-auto mt-1"></div>
-                        </div>
-                    </div>
+                    <MealPrepSuggestions
+                        recipes={recipes}
+                        onAddToPlan={(id) => addToMealPlan(id, selectedDate)}
+                        navigateTo={navigateTo}
+                    />
                 </div>
 
                 {/* Favorites */}
