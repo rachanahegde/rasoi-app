@@ -113,18 +113,20 @@ export async function generateRecipeAction(prompt, ingredients) {
 
     try {
         // Import the SDK dynamically to use the decrypted API key
-        const { GoogleGenAI } = await import('@google/genai');
+        const { GoogleGenerativeAI } = await import('@google/generative-ai');
 
         // Initialize the client with the decrypted API key
-        const ai = new GoogleGenAI({ apiKey });
+        const genAI = new GoogleGenerativeAI(apiKey);
 
-        // Generate content using the SDK
-        const response = await ai.models.generateContent({
-            model: "gemini-2.0-flash-exp",
-            contents: systemPrompt,
+        // Get the model - use the full model path for v1 API
+        const model = genAI.getGenerativeModel({
+            model: "models/gemini-flash-latest"
         });
 
-        const text = response.text;
+        // Generate content using the SDK
+        const result = await model.generateContent(systemPrompt);
+        const response = await result.response;
+        const text = response.text();
 
         // Clean up potential markdown code blocks
         const jsonStr = text.replace(/```json/g, '').replace(/```/g, '').trim();
