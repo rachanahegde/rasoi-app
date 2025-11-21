@@ -1,12 +1,63 @@
 'use server';
 
 import { cookies } from 'next/headers';
+import crypto from 'crypto';
 
 const COOKIE_NAME = 'gemini_api_key';
+const ALGORITHM = 'aes-256-gcm';
+const IV_LENGTH = 16;
+const AUTH_TAG_LENGTH = 16;
+
+// Get encryption key from environment variable
+// In production, set this in your .env.local file
+// For development, we'll generate a fallback (not recommended for production)
+function getEncryptionKey() {
+    const envKey = process.env.ENCRYPTION_SECRET;
+    if (!envKey) {
+        console.warn('ENCRYPTION_SECRET not set. Using fallback key. Set ENCRYPTION_SECRET in .env.local for production.');
+        // Fallback for development only - in production you MUST set ENCRYPTION_SECRET
+        return crypto.scryptSync('rasoi-app-default-secret-change-me', 'salt', 32);
+    }
+    return crypto.scryptSync(envKey, 'salt', 32);
+}
+
+// Encrypt the API key
+function encrypt(text) {
+    const iv = crypto.randomBytes(IV_LENGTH);
+    const cipher = crypto.createCipheriv(ALGORITHM, getEncryptionKey(), iv);
+
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+
+    const authTag = cipher.getAuthTag();
+
+    // Combine iv + authTag + encrypted data
+    return iv.toString('hex') + ':' + authTag.toString('hex') + ':' + encrypted;
+}
+
+// Decrypt the API key
+function decrypt(encryptedData) {
+    const parts = encryptedData.split(':');
+    if (parts.length !== 3) {
+        throw new Error('Invalid encrypted data format');
+    }
+
+    const iv = Buffer.from(parts[0], 'hex');
+    const authTag = Buffer.from(parts[1], 'hex');
+    const encrypted = parts[2];
+
+    const decipher = crypto.createDecipheriv(ALGORITHM, getEncryptionKey(), iv);
+    decipher.setAuthTag(authTag);
+
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+
+    return decrypted;
+}
 
 export async function saveApiKey(key) {
-    // In a production app, you might want to encrypt this value before storing
-    cookies().set(COOKIE_NAME, key, {
+    const encryptedKey = encrypt(key);
+    cookies().set(COOKIE_NAME, encryptedKey, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60 * 24 * 30, // 30 days
@@ -28,10 +79,18 @@ export async function hasApiKey() {
 
 export async function generateRecipeAction(prompt, ingredients) {
     const cookieStore = cookies();
-    const apiKey = cookieStore.get(COOKIE_NAME)?.value;
+    const encryptedKey = cookieStore.get(COOKIE_NAME)?.value;
 
-    if (!apiKey) {
+    if (!encryptedKey) {
         throw new Error('API Key not found. Please set your API key first.');
+    }
+
+    let apiKey;
+    try {
+        apiKey = decrypt(encryptedKey);
+    } catch (error) {
+        console.error('Failed to decrypt API key:', error);
+        throw new Error('Failed to decrypt API key. Please re-enter your key.');
     }
 
     const systemPrompt = `
