@@ -12,17 +12,17 @@ const SettingsView = ({ recipes, mealPlan, handleImportData }) => {
     };
     return (
         <div className="max-w-2xl mx-auto animate-in fade-in duration-500 space-y-8 pb-20">
-            <div className="border-b border-stone-200 pb-4">
-                <h2 className="text-3xl font-serif font-bold mb-2 text-stone-800">Notebook Settings</h2>
+            <div className="border-b border-border pb-4">
+                <h2 className="text-3xl font-serif font-bold mb-2 text-foreground">Notebook Settings</h2>
             </div>
-            <Card className="p-8 bg-white">
-                <h3 className="text-xl font-bold font-serif mb-4 flex items-center gap-2 text-stone-800">
+            <Card className="p-8 bg-card">
+                <h3 className="text-xl font-bold font-serif mb-4 flex items-center gap-2 text-foreground">
                     <Download className="w-5 h-5" /> Backup Notes
                 </h3>
                 <div className="relative">
                     <textarea
                         readOnly
-                        className="w-full h-32 p-4 rounded-lg bg-stone-50 border border-stone-200 text-xs font-mono text-stone-600 resize-none focus:outline-none"
+                        className="w-full h-32 p-4 rounded-lg bg-muted border border-border text-xs font-mono text-muted-foreground resize-none focus:outline-none"
                         value={JSON.stringify({ recipes, mealPlan }, null, 2)}
                     />
                     <Button size="sm" onClick={handleCopy} variant="secondary" className="absolute top-2 right-2 h-8">
@@ -30,12 +30,12 @@ const SettingsView = ({ recipes, mealPlan, handleImportData }) => {
                     </Button>
                 </div>
             </Card>
-            <Card className="p-8 bg-white">
-                <h3 className="text-xl font-bold font-serif mb-4 flex items-center gap-2 text-stone-800">
+            <Card className="p-8 bg-card">
+                <h3 className="text-xl font-bold font-serif mb-4 flex items-center gap-2 text-foreground">
                     <Upload className="w-5 h-5" /> Restore Notes
                 </h3>
                 <textarea
-                    className="w-full h-32 p-4 rounded-lg bg-white border border-stone-200 text-xs font-mono resize-none focus:ring-2 focus:ring-stone-800 mb-4"
+                    className="w-full h-32 p-4 rounded-lg bg-background border border-border text-xs font-mono resize-none focus:ring-2 focus:ring-ring mb-4"
                     placeholder="Paste data here..."
                     value={importData}
                     onChange={(e) => setImportData(e.target.value)}

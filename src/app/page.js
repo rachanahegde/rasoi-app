@@ -180,12 +180,12 @@ export default function App() {
   const filteredRecipes = getFilteredRecipes();
 
   return (
-    <div className="flex min-h-screen bg-dot-pattern text-stone-800 font-sans selection:bg-orange-200 selection:text-orange-900">
+    <div className="flex min-h-screen bg-dot-pattern text-foreground font-sans selection:bg-primary/20 selection:text-primary">
       <DottedBackground />
 
       {/* SIDEBAR - Leather Binding Look */}
-      <aside className="hidden md:flex w-24 flex-col items-center py-8 bg-[#EAE7DC] border-r border-[#D6D3D1] fixed h-full z-50 shadow-[4px_0_15px_-3px_rgba(0,0,0,0.1)]">
-        <div className="mb-10 p-3 bg-stone-800 text-[#FDFCF8] rounded-lg shadow-md transform rotate-[-2deg] border border-stone-700">
+      <aside className="hidden md:flex w-24 flex-col items-center py-8 bg-sidebar border-r border-sidebar-border fixed h-full z-50 shadow-[4px_0_15px_-3px_rgba(0,0,0,0.1)]">
+        <div className="mb-10 p-3 bg-sidebar-primary text-sidebar-primary-foreground rounded-lg shadow-md transform rotate-[-2deg] border border-sidebar-border">
           <ChefHat className="w-6 h-6" />
         </div>
 
@@ -193,31 +193,31 @@ export default function App() {
           <NavItem icon={Home} label="Home" active={view === 'dashboard'} onClick={() => navigateTo('dashboard')} />
           <NavItem icon={BookOpen} label="Recipes" active={view === 'recipes' || view === 'detail'} onClick={() => navigateTo('recipes')} />
           <NavItem icon={PenTool} label="Draft" active={view === 'generate'} onClick={() => navigateTo('generate')} highlight />
-          <div className="h-px bg-stone-300 w-12 mx-auto my-2" />
+          <div className="h-px bg-sidebar-border w-12 mx-auto my-2" />
           <NavItem icon={CalendarIcon} label="Plan" active={view === 'calendar'} onClick={() => navigateTo('calendar')} />
         </nav>
 
         <div className="flex flex-col gap-6 mt-auto">
-          <Bell className="w-6 h-6 text-stone-400 cursor-pointer hover:text-stone-600 transition-colors" />
+          <Bell className="w-6 h-6 text-muted-foreground cursor-pointer hover:text-foreground transition-colors" />
           <Settings
-            className={`w-6 h-6 cursor-pointer hover:text-stone-600 transition-colors ${view === 'settings' ? 'text-stone-800' : 'text-stone-400'}`}
+            className={`w-6 h-6 cursor-pointer hover:text-foreground transition-colors ${view === 'settings' ? 'text-foreground' : 'text-muted-foreground'}`}
             onClick={() => navigateTo('settings')}
           />
-          <div className="w-10 h-10 rounded-full bg-stone-300 overflow-hidden border-2 border-white shadow-sm grayscale hover:grayscale-0 transition-all">
+          <div className="w-10 h-10 rounded-full bg-muted overflow-hidden border-2 border-background shadow-sm grayscale hover:grayscale-0 transition-all">
             <img src="https://i.pravatar.cc/150?img=12" alt="User" />
           </div>
         </div>
       </aside>
 
       {/* MOBILE NAV */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#FDFCF8] border-t border-stone-200 p-4 flex justify-around z-50 pb-6 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-        <Home className={`w-6 h-6 ${view === 'dashboard' ? 'text-stone-800' : 'text-stone-400'}`} onClick={() => navigateTo('dashboard')} />
-        <BookOpen className={`w-6 h-6 ${view === 'recipes' ? 'text-stone-800' : 'text-stone-400'}`} onClick={() => navigateTo('recipes')} />
-        <div className="bg-stone-800 text-[#FDFCF8] p-3 rounded-full -mt-8 shadow-lg border-4 border-[#FDFCF8]" onClick={() => navigateTo('generate')}>
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4 flex justify-around z-50 pb-6 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+        <Home className={`w-6 h-6 ${view === 'dashboard' ? 'text-foreground' : 'text-muted-foreground'}`} onClick={() => navigateTo('dashboard')} />
+        <BookOpen className={`w-6 h-6 ${view === 'recipes' ? 'text-foreground' : 'text-muted-foreground'}`} onClick={() => navigateTo('recipes')} />
+        <div className="bg-primary text-primary-foreground p-3 rounded-full -mt-8 shadow-lg border-4 border-background" onClick={() => navigateTo('generate')}>
           <Sparkles className="w-6 h-6" />
         </div>
-        <Heart className="w-6 h-6 text-stone-400" onClick={() => navigateTo('recipes')} />
-        <Settings className="w-6 h-6 text-stone-400" onClick={() => navigateTo('settings')} />
+        <Heart className="w-6 h-6 text-muted-foreground" onClick={() => navigateTo('recipes')} />
+        <Settings className="w-6 h-6 text-muted-foreground" onClick={() => navigateTo('settings')} />
       </div>
 
       {/* MAIN CONTENT */}

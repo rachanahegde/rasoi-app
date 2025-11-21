@@ -15,31 +15,31 @@ const RecipesList = ({
     toggleFavorite
 }) => (
     <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-stone-200 pb-6">
-            <h2 className="text-3xl font-serif font-bold text-stone-800">Recipe Index</h2>
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-border pb-6">
+            <h2 className="text-3xl font-serif font-bold text-foreground">Recipe Index</h2>
             <div className="flex flex-wrap gap-3 w-full md:w-auto items-center">
                 {/* Search Bar - Logbook style */}
                 <div className="relative flex-1 md:w-64">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                         placeholder="Find in notebook..."
-                        className="pl-10 bg-white rounded-lg border-stone-200 shadow-sm"
+                        className="pl-10 bg-card rounded-lg border-border shadow-sm"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
 
                 {/* View Toggle */}
-                <div className="flex bg-white border border-stone-200 rounded-lg p-1 h-11 items-center shadow-sm">
+                <div className="flex bg-card border border-border rounded-lg p-1 h-11 items-center shadow-sm">
                     <button
                         onClick={() => setViewMode('grid')}
-                        className={`p-2 rounded-md transition-colors ${viewMode === 'grid' ? 'bg-stone-100 text-stone-900' : 'text-stone-400 hover:text-stone-600'}`}
+                        className={`p-2 rounded-md transition-colors ${viewMode === 'grid' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                     >
                         <LayoutGrid className="w-4 h-4" />
                     </button>
                     <button
                         onClick={() => setViewMode('list')}
-                        className={`p-2 rounded-md transition-colors ${viewMode === 'list' ? 'bg-stone-100 text-stone-900' : 'text-stone-400 hover:text-stone-600'}`}
+                        className={`p-2 rounded-md transition-colors ${viewMode === 'list' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                     >
                         <List className="w-4 h-4" />
                     </button>
@@ -65,24 +65,24 @@ const RecipesList = ({
                         <div
                             key={recipe.id}
                             onClick={() => navigateTo('detail', recipe.id)}
-                            className="group flex items-center gap-4 p-4 bg-white rounded-xl border border-stone-200 hover:border-stone-300 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                            className="group flex items-center gap-4 p-4 bg-card rounded-xl border border-border hover:border-input shadow-sm hover:shadow-md transition-all cursor-pointer"
                         >
                             <img src={recipe.image} className="w-20 h-20 rounded-lg object-cover sepia-[.15]" alt="thumb" />
                             <div className="flex-1">
                                 <div className="flex justify-between items-start">
-                                    <h3 className="font-serif font-bold text-lg text-stone-800">{recipe.title}</h3>
+                                    <h3 className="font-serif font-bold text-lg text-foreground">{recipe.title}</h3>
                                     <button
                                         onClick={(e) => toggleFavorite(e, recipe.id)}
-                                        className={`p-2 hover:bg-stone-100 rounded-full ${recipe.favorite ? 'text-red-500' : 'text-stone-300'}`}
+                                        className={`p-2 hover:bg-muted rounded-full ${recipe.favorite ? 'text-destructive' : 'text-muted'}`}
                                     >
                                         <Heart className={`w-5 h-5 ${recipe.favorite ? 'fill-current' : ''}`} />
                                     </button>
                                 </div>
-                                <p className="text-sm text-stone-500 line-clamp-1 mb-2 font-serif italic">{recipe.description}</p>
-                                <div className="flex items-center gap-4 text-xs font-medium text-stone-500">
+                                <p className="text-sm text-muted-foreground line-clamp-1 mb-2 font-serif italic">{recipe.description}</p>
+                                <div className="flex items-center gap-4 text-xs font-medium text-muted-foreground">
                                     <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {recipe.time}</span>
                                     <span className="flex items-center gap-1"><Flame className="w-3 h-3" /> {recipe.calories || 'N/A'}</span>
-                                    <Badge className="bg-stone-100 text-stone-600 border-none">{recipe.difficulty}</Badge>
+                                    <Badge className="bg-muted text-muted-foreground border-none">{recipe.difficulty}</Badge>
                                 </div>
                             </div>
                         </div>
@@ -91,11 +91,11 @@ const RecipesList = ({
             </div>
         ) : (
             <div className="text-center py-20">
-                <div className="bg-stone-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-dashed border-stone-200">
-                    <Search className="w-8 h-8 text-stone-400" />
+                <div className="bg-muted w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-dashed border-border">
+                    <Search className="w-8 h-8 text-muted-foreground" />
                 </div>
-                <h3 className="text-xl font-serif text-stone-800">Page empty</h3>
-                <p className="text-stone-500 font-serif italic">No recipes found matching that description.</p>
+                <h3 className="text-xl font-serif text-foreground">Page empty</h3>
+                <p className="text-muted-foreground font-serif italic">No recipes found matching that description.</p>
             </div>
         )}
     </div>

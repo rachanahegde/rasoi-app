@@ -5,12 +5,12 @@ const NavItem = ({ icon: Icon, active, onClick, highlight, label }) => (
         onClick={onClick}
         className={`
       w-full aspect-square flex flex-col gap-1 items-center justify-center rounded-lg transition-all duration-300
-      ${active ? 'bg-white text-stone-800 shadow-sm scale-105 border border-stone-200' : 'text-stone-400 hover:bg-stone-100/50 hover:text-stone-600'}
-      ${highlight && !active ? 'bg-stone-200 text-stone-700 hover:bg-stone-300 shadow-inner' : ''}
+      ${active ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm scale-105 border border-sidebar-border' : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'}
+      ${highlight && !active ? 'bg-accent text-accent-foreground hover:bg-accent/90 shadow-inner' : ''}
     `}
         title={label}
     >
-        <Icon className={`w-5 h-5 ${active ? 'text-stone-800' : ''} ${highlight && !active ? 'text-stone-700' : ''}`} />
+        <Icon className={`w-5 h-5 ${active ? 'text-sidebar-primary-foreground' : ''} ${highlight && !active ? 'text-accent-foreground' : ''}`} />
     </button>
 );
 

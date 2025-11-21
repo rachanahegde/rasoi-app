@@ -177,23 +177,23 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
     return (
         <div className="flex h-[calc(100vh-6rem)] gap-6 animate-in fade-in duration-500">
             {/* Main Calendar Area */}
-            <div className="flex-1 flex flex-col bg-[#FFFDF5] rounded-xl shadow-sm border border-stone-200 overflow-hidden">
+            <div className="flex-1 flex flex-col bg-card rounded-xl shadow-sm border border-border overflow-hidden">
                 {/* Calendar Header */}
-                <div className="p-6 border-b border-stone-200 flex justify-between items-center bg-[#FDFCF8]">
+                <div className="p-6 border-b border-border flex justify-between items-center bg-card">
                     <div className="flex items-center gap-4">
-                        <h2 className="text-2xl font-serif font-bold text-stone-800">
+                        <h2 className="text-2xl font-serif font-bold text-foreground">
                             {currentDate.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
                         </h2>
-                        <div className="flex items-center bg-stone-100 rounded-lg p-1 border border-stone-200">
+                        <div className="flex items-center bg-muted rounded-lg p-1 border border-border">
                             <button
                                 onClick={() => setViewMode('week')}
-                                className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${viewMode === 'week' ? 'bg-white shadow-sm text-stone-800' : 'text-stone-500 hover:text-stone-700'}`}
+                                className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${viewMode === 'week' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                             >
                                 Week
                             </button>
                             <button
                                 onClick={() => setViewMode('month')}
-                                className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${viewMode === 'month' ? 'bg-white shadow-sm text-stone-800' : 'text-stone-500 hover:text-stone-700'}`}
+                                className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${viewMode === 'month' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                             >
                                 Month
                             </button>
@@ -221,9 +221,9 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                 </div>
 
                 {/* Calendar Grid */}
-                <div className={`flex-1 grid ${viewMode === 'week' ? 'grid-cols-7' : 'grid-cols-7 grid-rows-6'} bg-stone-200 gap-px overflow-y-auto`}>
+                <div className={`flex-1 grid ${viewMode === 'week' ? 'grid-cols-7' : 'grid-cols-7 grid-rows-6'} bg-border gap-px overflow-y-auto`}>
                     {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-                        <div key={day} className="bg-[#FDFCF8] p-2 text-center text-xs font-bold text-stone-400 uppercase tracking-wider sticky top-0 z-10">
+                        <div key={day} className="bg-card p-2 text-center text-xs font-bold text-muted-foreground uppercase tracking-wider sticky top-0 z-10">
                             {day}
                         </div>
                     ))}
@@ -242,20 +242,20 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                 onDragOver={handleDragOver}
                                 onDrop={(e) => handleDrop(e, date)}
                                 className={`
-                  bg-white min-h-[80px] p-2 transition-colors cursor-pointer relative group
-                  ${!isCurrentMonth && viewMode === 'month' ? 'bg-stone-50/50 text-stone-400' : ''}
-                  ${isSelected ? 'ring-2 ring-inset ring-orange-300 bg-orange-50/30' : 'hover:bg-stone-50'}
+                  bg-background min-h-[80px] p-2 transition-colors cursor-pointer relative group
+                  ${!isCurrentMonth && viewMode === 'month' ? 'bg-muted/50 text-muted-foreground' : ''}
+                  ${isSelected ? 'ring-2 ring-inset ring-primary bg-primary/10' : 'hover:bg-muted'}
                 `}
                             >
                                 <div className="flex justify-between items-start mb-2">
                                     <span className={`
                     w-7 h-7 flex items-center justify-center rounded-full text-sm font-serif
-                    ${isToday ? 'bg-stone-800 text-white shadow-md' : 'text-stone-600'}
+                    ${isToday ? 'bg-primary text-primary-foreground shadow-md' : 'text-muted-foreground'}
                   `}>
                                         {date.getDate()}
                                     </span>
                                     {dayRecipes.length > 0 && (
-                                        <Badge variant="secondary" className="text-[10px] px-1.5 h-5 bg-orange-100 text-orange-800 hover:bg-orange-200 border-orange-200">
+                                        <Badge variant="secondary" className="text-[10px] px-1.5 h-5 bg-accent text-accent-foreground hover:bg-accent/90 border-accent">
                                             {dayRecipes.length}
                                         </Badge>
                                     )}
@@ -266,8 +266,8 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                         const recipe = recipes.find(r => r.id === rId);
                                         if (!recipe) return null;
                                         return (
-                                            <div key={`${dateKey}-${idx}`} className="text-xs p-1.5 rounded bg-white border border-stone-200 shadow-sm truncate font-medium text-stone-700 flex items-center gap-1 group/item">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-orange-300 shrink-0" />
+                                            <div key={`${dateKey}-${idx}`} className="text-xs p-1.5 rounded bg-background border border-border shadow-sm truncate font-medium text-foreground flex items-center gap-1 group/item">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
                                                 <span className="truncate">{recipe.title}</span>
                                             </div>
                                         );
@@ -275,7 +275,7 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                 </div>
 
                                 {/* Add Button on Hover */}
-                                <button className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-stone-100 text-stone-400 hover:bg-orange-100 hover:text-orange-600 items-center justify-center hidden group-hover:flex transition-colors">
+                                <button className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary items-center justify-center hidden group-hover:flex transition-colors">
                                     <Plus className="w-4 h-4" />
                                 </button>
                             </div>
@@ -286,17 +286,17 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
 
             {/* Side Panel (Day Detail or Grocery List) */}
             {(isPanelOpen || showGroceryList) && (
-                <div className="w-96 bg-white rounded-xl shadow-xl border border-stone-200 flex flex-col animate-in slide-in-from-right duration-300">
+                <div className="w-96 bg-card rounded-xl shadow-xl border border-border flex flex-col animate-in slide-in-from-right duration-300">
                     {showGroceryList ? (
                         // Grocery List View
                         <>
-                            <div className="p-6 border-b border-stone-200 flex justify-between items-center bg-[#FDFCF8] rounded-t-xl">
+                            <div className="p-6 border-b border-border flex justify-between items-center bg-card rounded-t-xl">
                                 <div>
-                                    <h3 className="font-serif font-bold text-xl text-stone-800">Grocery List</h3>
-                                    <p className="text-xs text-stone-500 mt-1">Based on {viewMode === 'week' ? 'this week' : 'selected day'}</p>
+                                    <h3 className="font-serif font-bold text-xl text-foreground">Grocery List</h3>
+                                    <p className="text-xs text-muted-foreground mt-1">Based on {viewMode === 'week' ? 'this week' : 'selected day'}</p>
                                 </div>
                                 <Button variant="ghost" size="icon" onClick={() => setShowGroceryList(false)}>
-                                    <X className="w-5 h-5 text-stone-400" />
+                                    <X className="w-5 h-5 text-muted-foreground" />
                                 </Button>
                             </div>
                             <div className="flex-1 overflow-y-auto p-6">
@@ -304,20 +304,20 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                     <div className="space-y-3">
                                         {groceryList.map((item) => (
                                             <div key={item.id}
-                                                className={`flex items-start gap-3 p-3 rounded-lg border transition-colors group cursor-pointer ${item.checked ? 'bg-stone-50 border-stone-100' : 'bg-white border-stone-200 hover:border-orange-200'}`}
+                                                className={`flex items-start gap-3 p-3 rounded-lg border transition-colors group cursor-pointer ${item.checked ? 'bg-muted border-border' : 'bg-card border-border hover:border-primary/50'}`}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     toggleGroceryItem(item.id);
                                                 }}
                                             >
-                                                <div className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center transition-colors ${item.checked ? 'bg-orange-500 border-orange-500 text-white' : 'border-stone-300 group-hover:border-orange-400'}`}>
+                                                <div className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center transition-colors ${item.checked ? 'bg-primary border-primary text-primary-foreground' : 'border-input group-hover:border-primary'}`}>
                                                     {item.checked && <Check className="w-3.5 h-3.5" />}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <p className={`text-sm font-medium capitalize transition-colors ${item.checked ? 'text-stone-400 line-through' : 'text-stone-800'}`}>{item.name}</p>
+                                                    <p className={`text-sm font-medium capitalize transition-colors ${item.checked ? 'text-muted-foreground line-through' : 'text-foreground'}`}>{item.name}</p>
                                                     <div className="flex flex-wrap gap-1 mt-1">
                                                         {item.recipes.map(r => (
-                                                            <span key={r.id} className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-stone-100 text-stone-500 truncate max-w-full">
+                                                            <span key={r.id} className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground truncate max-w-full">
                                                                 {r.title}
                                                             </span>
                                                         ))}
@@ -327,7 +327,7 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="text-center py-12 text-stone-400 italic">
+                                    <div className="text-center py-12 text-muted-foreground italic">
                                         <ShoppingBasket className="w-12 h-12 mx-auto mb-4 opacity-20" />
                                         <p>No ingredients needed yet.</p>
                                     </div>
@@ -337,49 +337,49 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                     ) : (
                         // Day Detail View
                         <>
-                            <div className="p-6 border-b border-stone-200 flex justify-between items-center bg-[#FDFCF8] rounded-t-xl">
+                            <div className="p-6 border-b border-border flex justify-between items-center bg-card rounded-t-xl">
                                 <div>
-                                    <h3 className="font-serif font-bold text-xl text-stone-800">
+                                    <h3 className="font-serif font-bold text-xl text-foreground">
                                         {selectedDay.toLocaleDateString(undefined, { weekday: 'long' })}
                                     </h3>
-                                    <p className="text-stone-500 text-sm">{selectedDay.toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}</p>
+                                    <p className="text-muted-foreground text-sm">{selectedDay.toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}</p>
                                 </div>
                                 <Button variant="ghost" size="icon" onClick={() => setIsPanelOpen(false)}>
-                                    <X className="w-5 h-5 text-stone-400" />
+                                    <X className="w-5 h-5 text-muted-foreground" />
                                 </Button>
                             </div>
 
                             <div className="flex-1 overflow-y-auto p-6 space-y-6">
                                 {/* Scheduled Meals */}
                                 <div>
-                                    <h4 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-4">Scheduled Meals</h4>
+                                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4">Scheduled Meals</h4>
                                     <div className="space-y-4">
                                         {(mealPlan[selectedDay.toDateString()] || []).length > 0 ? (
                                             (mealPlan[selectedDay.toDateString()] || []).map((rId, idx) => {
                                                 const recipe = recipes.find(r => r.id === rId);
                                                 if (!recipe) return null;
                                                 return (
-                                                    <div key={idx} className="bg-white border border-stone-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow group">
+                                                    <div key={idx} className="bg-card border border-border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow group">
                                                         <div className="flex gap-3">
-                                                            <div className="w-16 h-16 rounded-md bg-stone-100 overflow-hidden shrink-0">
+                                                            <div className="w-16 h-16 rounded-md bg-muted overflow-hidden shrink-0">
                                                                 {/* Placeholder for image */}
-                                                                <div className="w-full h-full flex items-center justify-center text-stone-300 bg-stone-100">
+                                                                <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-muted">
                                                                     <ChefHat className="w-8 h-8" />
                                                                 </div>
                                                             </div>
                                                             <div className="flex-1 min-w-0">
-                                                                <h5 className="font-serif font-bold text-stone-800 truncate cursor-pointer hover:text-orange-600" onClick={() => navigateTo('detail', recipe.id)}>
+                                                                <h5 className="font-serif font-bold text-foreground truncate cursor-pointer hover:text-primary" onClick={() => navigateTo('detail', recipe.id)}>
                                                                     {recipe.title}
                                                                 </h5>
-                                                                <div className="flex items-center gap-3 mt-1 text-xs text-stone-500">
+                                                                <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                                                                     <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {recipe.prepTime || '30m'}</span>
-                                                                    <span className="px-1.5 py-0.5 rounded-full bg-stone-100 border border-stone-200">Dinner</span>
+                                                                    <span className="px-1.5 py-0.5 rounded-full bg-muted border border-border">Dinner</span>
                                                                 </div>
                                                             </div>
                                                             <div className="flex flex-col justify-between items-end">
                                                                 <button
                                                                     onClick={() => removeRecipeFromDate(selectedDay, idx)}
-                                                                    className="text-stone-300 hover:text-red-400 transition-colors"
+                                                                    className="text-muted-foreground hover:text-destructive transition-colors"
                                                                 >
                                                                     <Trash2 className="w-4 h-4" />
                                                                 </button>
@@ -389,9 +389,9 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                                 );
                                             })
                                         ) : (
-                                            <div className="text-center py-8 border-2 border-dashed border-stone-200 rounded-lg bg-stone-50/50">
-                                                <p className="text-stone-400 italic text-sm">No meals planned.</p>
-                                                <Button variant="link" className="text-orange-500 text-sm mt-1" onClick={() => navigateTo('recipes')}>
+                                            <div className="text-center py-8 border-2 border-dashed border-border rounded-lg bg-muted/50">
+                                                <p className="text-muted-foreground italic text-sm">No meals planned.</p>
+                                                <Button variant="link" className="text-primary text-sm mt-1" onClick={() => navigateTo('recipes')}>
                                                     Browse Recipes
                                                 </Button>
                                             </div>
@@ -401,16 +401,16 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
 
                                 {/* Quick Add Suggestions (Favorites) */}
                                 <div>
-                                    <h4 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-4">Quick Add Favorites</h4>
+                                    <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4">Quick Add Favorites</h4>
                                     <div className="grid grid-cols-1 gap-2">
                                         {recipes.filter(r => r.favorite).slice(0, 3).map(recipe => (
                                             <div
                                                 key={recipe.id}
                                                 onClick={() => addRecipeToDate(selectedDay, recipe.id)}
-                                                className="flex items-center justify-between p-2 rounded-md border border-stone-100 hover:border-orange-200 hover:bg-orange-50 cursor-pointer transition-colors group"
+                                                className="flex items-center justify-between p-2 rounded-md border border-border hover:border-primary/20 hover:bg-primary/5 cursor-pointer transition-colors group"
                                             >
-                                                <span className="text-sm font-medium text-stone-700 truncate">{recipe.title}</span>
-                                                <Plus className="w-4 h-4 text-stone-300 group-hover:text-orange-500" />
+                                                <span className="text-sm font-medium text-foreground truncate">{recipe.title}</span>
+                                                <Plus className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
                                             </div>
                                         ))}
                                     </div>

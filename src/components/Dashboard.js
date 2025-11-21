@@ -32,19 +32,18 @@ const Dashboard = ({
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Header - Handwritten Style */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-6 border-b-2 border-dashed border-stone-300">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-6 border-b-2 border-dashed border-border">
                 <div>
-                    <div className="flex items-center gap-2 text-stone-500 mb-1 font-medium font-serif italic">
-                        <span>Good morning, Chef</span>
+                    <div className="flex items-center gap-2 text-muted-foreground mb-1 font-medium font-serif italic">
+                        <span>Good morning, Rachana</span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-serif text-stone-800 leading-tight">
-                        <span className="text-stone-400 font-light">Today's</span> <br />
-                        Kitchen Notes
+                    <h1 className="text-4xl md:text-5xl font-serif text-foreground leading-tight">
+                        <span className="text-muted-foreground font-light">Welcome to</span> Rasoi
                     </h1>
                 </div>
                 <div className="flex gap-3">
                     <Button onClick={() => navigateTo('generate')} variant="primary" className="rounded-full px-6">
-                        <Sparkles className="w-4 h-4 mr-2 text-orange-200" /> Draft New Idea
+                        <Sparkles className="w-4 h-4 mr-2 text-primary-foreground" /> Draft New Idea
                     </Button>
                 </div>
             </div>
@@ -88,8 +87,8 @@ const Dashboard = ({
                 {/* Favorites */}
                 <div className="lg:col-span-12 mt-4">
                     <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-2xl font-serif font-bold text-stone-800 flex items-center gap-2">
-                            <Heart className="w-5 h-5 text-red-400 fill-red-400" /> Loved Recipes
+                        <h3 className="text-2xl font-serif font-bold text-foreground flex items-center gap-2">
+                            <Heart className="w-5 h-5 text-destructive fill-destructive" /> Loved Recipes
                         </h3>
                         <Button variant="ghost" onClick={() => navigateTo('recipes')} className="font-serif italic">View All Index <ChevronRight className="w-4 h-4 ml-1" /></Button>
                     </div>
@@ -97,7 +96,7 @@ const Dashboard = ({
                         {favoriteRecipes.length > 0 ? favoriteRecipes.slice(0, 3).map(recipe => (
                             <RecipeCard key={recipe.id} recipe={recipe} onClick={() => navigateTo('detail', recipe.id)} onToggleFav={toggleFavorite} />
                         )) : (
-                            <div className="col-span-full text-center py-12 bg-stone-50/50 rounded-xl border-2 border-dashed border-stone-200 text-stone-400 font-serif italic">
+                            <div className="col-span-full text-center py-12 bg-muted/50 rounded-xl border-2 border-dashed border-border text-muted-foreground font-serif italic">
                                 No favorites marked yet.
                             </div>
                         )}

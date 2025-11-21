@@ -17,14 +17,14 @@ const MealPrepSuggestions = ({ recipes, onAddToPlan, navigateTo }) => {
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-2 mb-2">
-                <Utensils className="w-5 h-5 text-green-900" />
-                <h3 className="font-serif font-bold text-xl text-stone-800">Meal Prep Ideas</h3>
+                <Utensils className="w-5 h-5 text-primary" />
+                <h3 className="font-serif font-bold text-xl text-foreground">Meal Prep Ideas</h3>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {suggestions.map(recipe => (
-                    <div key={recipe.id} className="bg-[#FDFCF8] p-3 rounded-xl border border-stone-200 shadow-sm hover:shadow-md hover:border-green-800 transition-all flex gap-4 group cursor-pointer" onClick={() => navigateTo('detail', recipe.id)}>
-                        <div className="w-24 h-24 rounded-lg bg-stone-100 shrink-0 overflow-hidden relative border border-stone-100">
+                    <div key={recipe.id} className="bg-card p-3 rounded-xl border border-border shadow-sm hover:shadow-md hover:border-primary transition-all flex gap-4 group cursor-pointer" onClick={() => navigateTo('detail', recipe.id)}>
+                        <div className="w-24 h-24 rounded-lg bg-muted shrink-0 overflow-hidden relative border border-border">
                             {recipe.image ? (
                                 <img
                                     src={recipe.image}
@@ -32,7 +32,7 @@ const MealPrepSuggestions = ({ recipes, onAddToPlan, navigateTo }) => {
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 sepia-[.2]"
                                 />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-stone-300 bg-stone-100">
+                                <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-muted">
                                     <ChefHat className="w-8 h-8" />
                                 </div>
                             )}
@@ -40,14 +40,14 @@ const MealPrepSuggestions = ({ recipes, onAddToPlan, navigateTo }) => {
 
                         <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
                             <div>
-                                <h4 className="font-serif font-bold text-stone-800 truncate group-hover:text-[#6f1d1b] transition-colors">
+                                <h4 className="font-serif font-bold text-foreground truncate group-hover:text-primary transition-colors">
                                     {recipe.title}
                                 </h4>
                                 <div className="flex items-center gap-2 mt-1.5">
-                                    <span className="text-xs text-stone-500 flex items-center gap-1 bg-stone-100 px-1.5 py-0.5 rounded-md font-serif">
+                                    <span className="text-xs text-muted-foreground flex items-center gap-1 bg-muted px-1.5 py-0.5 rounded-md font-serif">
                                         <Clock className="w-3 h-3" /> {recipe.prepTime || '45m'}
                                     </span>
-                                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-[#6f1d1b]/10 text-[#6f1d1b] border-[#6f1d1b]/20 font-serif">
+                                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-primary/10 text-primary border-primary/20 font-serif">
                                         Batch-friendly
                                     </Badge>
                                 </div>
@@ -57,7 +57,7 @@ const MealPrepSuggestions = ({ recipes, onAddToPlan, navigateTo }) => {
                                 <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="h-8 px-3 text-xs font-medium text-stone-600 hover:text-[#6f1d1b] hover:bg-[#6f1d1b]/5 -ml-2 w-fit font-serif"
+                                    className="h-8 px-3 text-xs font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 -ml-2 w-fit font-serif"
                                     onClick={(e) => { e.stopPropagation(); onAddToPlan(recipe.id); }}
                                 >
                                     <Plus className="w-3.5 h-3.5 mr-1.5" /> Add to Plan
