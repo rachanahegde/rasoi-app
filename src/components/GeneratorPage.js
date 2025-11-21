@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PenTool, Loader2, ChefHat, Sparkles } from 'lucide-react';
+import { PenTool, Loader2, ChefHat, Sparkles, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { saveApiKey, hasApiKey, removeApiKey, generateRecipeAction } from '@/app/actions';
@@ -15,6 +15,7 @@ const GeneratorPage = ({
     const [prompt, setPrompt] = useState(aiPrompt || '');
     const [ingredients, setIngredients] = useState(aiIngredients || '');
     const [generated, setGenerated] = useState(null);
+    const [customImage, setCustomImage] = useState(null);
 
     // Key management state
     const [keyInput, setKeyInput] = useState('');
@@ -57,6 +58,7 @@ const GeneratorPage = ({
         }
         setGenLoading(true);
         setGenerated(null);
+        setCustomImage(null); // Reset custom image on new generation
         try {
             const result = await generateRecipeAction(prompt, ingredients);
             setGenerated(result);
@@ -65,6 +67,37 @@ const GeneratorPage = ({
             alert(error.message || "Failed to generate recipe.");
         }
         setGenLoading(false);
+    };
+
+    const handleImageUpload = (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            // Check file size (limit to 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Image size should be less than 5MB");
+                return;
+            }
+
+            // Check file type
+            if (!file.type.startsWith('image/')) {
+                alert("Please upload an image file");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setCustomImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSaveWithImage = () => {
+        const recipeToSave = {
+            ...generated,
+            image: customImage || generated.image
+        };
+        handleSaveRecipe(recipeToSave);
     };
 
     return (
@@ -217,8 +250,63 @@ const GeneratorPage = ({
                                 </ol>
                             </div>
 
+                            {/* Image Upload Section */}
+                            <div className="bg-muted/30 p-6 rounded-lg border border-border">
+                                <h3 className="font-bold mb-4 text-sm uppercase tracking-widest text-muted-foreground">Recipe Image</h3>
+
+                                <div className="space-y-4">
+                                    {/* Image Preview */}
+                                    <div className="relative w-full h-48 rounded-lg overflow-hidden border-2 border-border bg-muted">
+                                        {(customImage || generated.image) ? (
+                                            <img
+                                                src={customImage || generated.image}
+                                                alt="Recipe preview"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                                <ChefHat className="w-12 h-12" />
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Upload Button */}
+                                    <div className="flex gap-2">
+                                        <label className="flex-1">
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleImageUpload}
+                                                className="hidden"
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                className="w-full cursor-pointer"
+                                                onClick={(e) => e.currentTarget.previousElementSibling.click()}
+                                            >
+                                                <Upload className="w-4 h-4 mr-2" />
+                                                {customImage ? 'Change Image' : 'Upload Image'}
+                                            </Button>
+                                        </label>
+                                        {customImage && (
+                                            <Button
+                                                variant="ghost"
+                                                onClick={() => setCustomImage(null)}
+                                                className="text-muted-foreground hover:text-destructive"
+                                            >
+                                                Remove
+                                            </Button>
+                                        )}
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                        Upload a custom image for this recipe (max 5MB)
+                                    </p>
+                                </div>
+                            </div>
+
                             <div className="flex gap-4 pt-4 border-t border-border">
-                                <Button onClick={() => handleSaveRecipe(generated)} variant="accent" className="flex-1">
+                                <Button onClick={handleSaveWithImage} variant="accent" className="flex-1">
                                     Save to Notebook
                                 </Button>
                                 <Button variant="ghost" onClick={() => setGenerated(null)}>
