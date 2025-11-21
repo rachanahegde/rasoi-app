@@ -11,7 +11,7 @@ const MealPrepSuggestions = ({ recipes, onAddToPlan, navigateTo }) => {
 
         // Let's simulate "smart" suggestions by shuffling and picking 4
         const shuffled = [...recipes].sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, 4);
+        return shuffled.slice(0, 3);
     }, [recipes]);
 
     return (
@@ -22,50 +22,56 @@ const MealPrepSuggestions = ({ recipes, onAddToPlan, navigateTo }) => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {suggestions.map(recipe => (
-                    <div key={recipe.id} className="bg-card p-3 rounded-xl border border-border shadow-sm hover:shadow-md hover:border-primary transition-all flex gap-4 group cursor-pointer" onClick={() => navigateTo('detail', recipe.id)}>
-                        <div className="w-24 h-24 rounded-lg bg-muted shrink-0 overflow-hidden relative border border-border">
-                            {recipe.image ? (
-                                <img
-                                    src={recipe.image}
-                                    alt={recipe.title}
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 sepia-[.2]"
-                                />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-muted">
-                                    <ChefHat className="w-8 h-8" />
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
-                            <div>
-                                <h4 className="font-serif font-bold text-foreground truncate group-hover:text-primary transition-colors">
-                                    {recipe.title}
-                                </h4>
-                                <div className="flex items-center gap-2 mt-1.5">
-                                    <span className="text-xs text-muted-foreground flex items-center gap-1 bg-muted px-1.5 py-0.5 rounded-md font-serif">
-                                        <Clock className="w-3 h-3" /> {recipe.prepTime || '45m'}
-                                    </span>
-                                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-primary/10 text-primary border-primary/20 font-serif">
-                                        Batch-friendly
-                                    </Badge>
-                                </div>
+                {suggestions.length > 0 ? (
+                    suggestions.map(recipe => (
+                        <div key={recipe.id} className="bg-card p-3 rounded-xl border border-border shadow-sm hover:shadow-md hover:border-primary transition-all flex gap-4 group cursor-pointer" onClick={() => navigateTo('detail', recipe.id)}>
+                            <div className="w-24 h-24 rounded-lg bg-muted shrink-0 overflow-hidden relative border border-border">
+                                {recipe.image ? (
+                                    <img
+                                        src={recipe.image}
+                                        alt={recipe.title}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 sepia-[.2]"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-muted">
+                                        <ChefHat className="w-8 h-8" />
+                                    </div>
+                                )}
                             </div>
 
-                            <div className="mt-2">
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8 px-3 text-xs font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 -ml-2 w-fit font-serif"
-                                    onClick={(e) => { e.stopPropagation(); onAddToPlan(recipe.id); }}
-                                >
-                                    <Plus className="w-3.5 h-3.5 mr-1.5" /> Add to Plan
-                                </Button>
+                            <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
+                                <div>
+                                    <h4 className="font-serif font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                                        {recipe.title}
+                                    </h4>
+                                    <div className="flex items-center gap-2 mt-1.5">
+                                        <span className="text-xs text-muted-foreground flex items-center gap-1 bg-muted px-1.5 py-0.5 rounded-md font-serif">
+                                            <Clock className="w-3 h-3" /> {recipe.prepTime || '45m'}
+                                        </span>
+                                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-primary/10 text-primary border-primary/20 font-serif">
+                                            Batch-friendly
+                                        </Badge>
+                                    </div>
+                                </div>
+
+                                <div className="mt-2">
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-8 px-3 text-xs font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 -ml-2 w-fit font-serif"
+                                        onClick={(e) => { e.stopPropagation(); onAddToPlan(recipe.id); }}
+                                    >
+                                        <Plus className="w-3.5 h-3.5 mr-1.5" /> Add to Plan
+                                    </Button>
+                                </div>
                             </div>
                         </div>
+                    ))
+                ) : (
+                    <div className="col-span-full text-center py-8 bg-muted/30 rounded-xl border-2 border-dashed border-border text-muted-foreground font-serif italic">
+                        <p>Add recipes to your library to get meal prep suggestions!</p>
                     </div>
-                ))}
+                )}
             </div>
         </div>
     );

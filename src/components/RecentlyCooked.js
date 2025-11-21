@@ -7,10 +7,14 @@ const RecentlyCooked = ({ recipes, mealPlan, onCookAgain, navigateTo }) => {
         const history = [];
         const today = new Date();
 
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
         // Iterate through meal plan to find past meals
         Object.entries(mealPlan).forEach(([dateStr, recipeIds]) => {
             const date = new Date(dateStr);
-            if (date < today) {
+            // Check if date is in the past and within the last month
+            if (date < today && date >= oneMonthAgo) {
                 recipeIds.forEach(id => {
                     const recipe = recipes.find(r => r.id === id);
                     if (recipe) {
@@ -28,21 +32,11 @@ const RecentlyCooked = ({ recipes, mealPlan, onCookAgain, navigateTo }) => {
             }
         });
 
-        // Sort by date descending and take top 5
-        return history.sort((a, b) => b.date - a.date).slice(0, 5);
+        // Sort by date descending and take top 4
+        return history.sort((a, b) => b.date - a.date).slice(0, 4);
     }, [recipes, mealPlan]);
 
-    // Temporary demo data for visualization
-    const demoMeals = useMemo(() => {
-        return recipes.slice(0, 4).map((recipe, i) => {
-            const d = new Date();
-            d.setDate(d.getDate() - (i + 1) * 2);
-            return { recipe, date: d };
-        });
-    }, [recipes]);
-
-    // Use demo data if no real history exists (for now, as requested)
-    const displayMeals = recentMeals.length > 0 ? recentMeals : demoMeals;
+    const displayMeals = recentMeals;
 
     if (displayMeals.length === 0) {
         return (
