@@ -23,22 +23,36 @@ import GeneratorPage from '@/components/GeneratorPage';
 import SettingsView from '@/components/SettingsView';
 import CalendarPage from '@/components/CalendarPage';
 
-import { INITIAL_RECIPES } from '@/lib/data';
 import { generateId } from '@/lib/helpers';
+import { useRecipes } from '@/context/RecipeContext';
 
 export default function App() {
+  const {
+    recipes,
+    mealPlan,
+    groceryState,
+    loading,
+    addRecipe,
+    updateRecipe,
+    deleteRecipe,
+    toggleFavorite: toggleFavoriteContext,
+    addToMealPlan: addToMealPlanContext,
+    removeFromMealPlan: removeFromMealPlanContext,
+    setGroceryState,
+    setMealPlan,
+    importData
+  } = useRecipes();
+
   const [view, setView] = useState('dashboard');
   const [activeRecipeId, setActiveRecipeId] = useState(null);
-  const [recipes, setRecipes] = useState([]);
-  const [mealPlan, setMealPlan] = useState({});
-  const [loading, setLoading] = useState(true);
+  // recipes, mealPlan, loading, groceryState moved to context
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('newest');
   const [viewMode, setViewMode] = useState('grid');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiIngredients, setAiIngredients] = useState('');
-  const [groceryState, setGroceryState] = useState({});
+  // groceryState moved to context
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
@@ -51,6 +65,7 @@ export default function App() {
     }
   }, []);
 
+  // Dark mode effect remains here as it is UI state
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
@@ -62,102 +77,43 @@ export default function App() {
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
-  useEffect(() => {
-    const storedRecipes = localStorage.getItem('chefs_notebook_recipes');
-    if (storedRecipes) {
-      const parsed = JSON.parse(storedRecipes);
-      // Update stored recipes with latest data from code (INITIAL_RECIPES)
-      // This ensures code changes (like image fixes) are reflected
-      const merged = parsed.map(p => {
-        const fresh = INITIAL_RECIPES.find(i => i.id === p.id);
-        return fresh ? fresh : p;
-      });
-      setRecipes(merged);
-    } else {
-      setRecipes(INITIAL_RECIPES);
-      localStorage.setItem('chefs_notebook_recipes', JSON.stringify(INITIAL_RECIPES));
-    }
-    const storedPlan = localStorage.getItem('chefs_notebook_mealplan');
-    if (storedPlan) {
-      setMealPlan(JSON.parse(storedPlan));
-    }
-    const storedGroceryState = localStorage.getItem('chefs_notebook_grocery_state');
-    if (storedGroceryState) {
-      setGroceryState(JSON.parse(storedGroceryState));
-    }
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (!loading) {
-      localStorage.setItem('chefs_notebook_recipes', JSON.stringify(recipes));
-    }
-  }, [recipes, loading]);
-
-  useEffect(() => {
-    if (!loading) {
-      localStorage.setItem('chefs_notebook_mealplan', JSON.stringify(mealPlan));
-    }
-  }, [mealPlan, loading]);
-
-  useEffect(() => {
-    if (!loading) {
-      localStorage.setItem('chefs_notebook_grocery_state', JSON.stringify(groceryState));
-    }
-  }, [groceryState, loading]);
+  // Data persistence effects removed (handled in context)
 
   const handleSaveRecipe = (recipe) => {
     if (recipe.id) {
-      setRecipes(prev => prev.map(r => r.id === recipe.id ? { ...recipe, createdAt: r.createdAt } : r));
+      updateRecipe(recipe);
     } else {
-      const newRecipe = { ...recipe, id: generateId(), favorite: false, createdAt: Date.now() };
-      setRecipes(prev => [newRecipe, ...prev]);
+      addRecipe(recipe);
     }
     setView('recipes');
   };
 
   const handleDeleteRecipe = (id) => {
     if (confirm('Tear this page out of your notebook?')) {
-      setRecipes(prev => prev.filter(r => r.id !== id));
-      const newPlan = { ...mealPlan };
-      Object.keys(newPlan).forEach(date => {
-        newPlan[date] = newPlan[date].filter(rId => rId !== id);
-      });
-      setMealPlan(newPlan);
+      deleteRecipe(id);
       setView('recipes');
     }
   };
 
   const toggleFavorite = (e, id) => {
     e.stopPropagation();
-    setRecipes(prev => prev.map(r => r.id === id ? { ...r, favorite: !r.favorite } : r));
+    toggleFavoriteContext(id);
   };
 
   const addToMealPlan = (recipeId, date = null) => {
     const targetDate = date || selectedDate;
-    const dateKey = targetDate.toDateString();
-    setMealPlan(prev => ({
-      ...prev,
-      [dateKey]: prev[dateKey] ? [...prev[dateKey], recipeId] : [recipeId]
-    }));
+    addToMealPlanContext(recipeId, targetDate);
   };
 
   const removeFromMealPlan = (dateKey, recipeId) => {
-    setMealPlan(prev => ({
-      ...prev,
-      [dateKey]: prev[dateKey].filter(id => id !== recipeId)
-    }));
+    removeFromMealPlanContext(dateKey, recipeId);
   };
 
   const handleImportData = (jsonString) => {
-    try {
-      const data = JSON.parse(jsonString);
-      if (data.recipes && Array.isArray(data.recipes)) {
-        setRecipes(data.recipes);
-        setMealPlan(data.mealPlan || {});
-        alert('Notebook restored successfully!');
-      }
-    } catch (e) {
+    const success = importData(jsonString);
+    if (success) {
+      alert('Notebook restored successfully!');
+    } else {
       alert('Error reading the file.');
     }
   };
