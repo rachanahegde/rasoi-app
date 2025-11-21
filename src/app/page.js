@@ -10,7 +10,7 @@ import {
   Heart,
   Calendar as CalendarIcon,
   PenTool,
-  ChefHat
+  Moon
 } from 'lucide-react';
 
 import DottedBackground from '@/components/DottedBackground';
@@ -39,6 +39,28 @@ export default function App() {
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiIngredients, setAiIngredients] = useState('');
   const [groceryState, setGroceryState] = useState({});
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    // Check system preference on initial load if no preference stored
+    const storedDarkMode = localStorage.getItem('chefs_notebook_dark_mode');
+    if (storedDarkMode !== null) {
+      setDarkMode(storedDarkMode === 'true');
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setDarkMode(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('chefs_notebook_dark_mode', darkMode);
+  }, [darkMode]);
+
+  const toggleDarkMode = () => setDarkMode(!darkMode);
 
   useEffect(() => {
     const storedRecipes = localStorage.getItem('chefs_notebook_recipes');
@@ -185,14 +207,10 @@ export default function App() {
 
       {/* SIDEBAR - Leather Binding Look */}
       <aside className="hidden md:flex w-24 flex-col items-center py-8 bg-sidebar border-r border-sidebar-border fixed h-full z-50 shadow-[4px_0_15px_-3px_rgba(0,0,0,0.1)]">
-        <div className="mb-10 p-3 bg-sidebar-primary text-sidebar-primary-foreground rounded-lg shadow-md transform rotate-[-2deg] border border-sidebar-border">
-          <ChefHat className="w-6 h-6" />
-        </div>
-
-        <nav className="flex-1 flex flex-col gap-6 w-full px-4">
+        <nav className="flex-1 flex flex-col gap-6 w-full px-4 mt-10">
           <NavItem icon={Home} label="Home" active={view === 'dashboard'} onClick={() => navigateTo('dashboard')} />
           <NavItem icon={BookOpen} label="Recipes" active={view === 'recipes' || view === 'detail'} onClick={() => navigateTo('recipes')} />
-          <NavItem icon={PenTool} label="Draft" active={view === 'generate'} onClick={() => navigateTo('generate')} highlight />
+          <NavItem icon={PenTool} label="Draft" active={view === 'generate'} onClick={() => navigateTo('generate')} />
           <div className="h-px bg-sidebar-border w-12 mx-auto my-2" />
           <NavItem icon={CalendarIcon} label="Plan" active={view === 'calendar'} onClick={() => navigateTo('calendar')} />
         </nav>
@@ -202,6 +220,10 @@ export default function App() {
           <Settings
             className={`w-6 h-6 cursor-pointer hover:text-foreground transition-colors ${view === 'settings' ? 'text-foreground' : 'text-muted-foreground'}`}
             onClick={() => navigateTo('settings')}
+          />
+          <Moon
+            className={`w-6 h-6 cursor-pointer hover:text-foreground transition-colors ${darkMode ? 'text-foreground fill-current' : 'text-muted-foreground'}`}
+            onClick={toggleDarkMode}
           />
           <div className="w-10 h-10 rounded-full bg-muted overflow-hidden border-2 border-background shadow-sm grayscale hover:grayscale-0 transition-all">
             <img src="https://i.pravatar.cc/150?img=12" alt="User" />
@@ -285,6 +307,8 @@ export default function App() {
             recipes={recipes}
             mealPlan={mealPlan}
             handleImportData={handleImportData}
+            darkMode={darkMode}
+            toggleDarkMode={toggleDarkMode}
           />
         )}
         {view === 'calendar' && (
