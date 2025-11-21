@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PenTool, Loader2, ChefHat, Sparkles, Upload } from 'lucide-react';
+import { PenTool, Loader2, ChefHat, Sparkles, Upload, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { saveApiKey, hasApiKey, removeApiKey, generateRecipeAction } from '@/app/actions';
@@ -21,6 +21,7 @@ const GeneratorPage = ({
     const [keyInput, setKeyInput] = useState('');
     const [isKeySet, setIsKeySet] = useState(false);
     const [showKeyInput, setShowKeyInput] = useState(false); // For toggling visibility of input when key is already set
+    const [showKeyText, setShowKeyText] = useState(false); // For toggling password visibility
     const [checkingKey, setCheckingKey] = useState(true);
 
     useEffect(() => {
@@ -131,12 +132,19 @@ const GeneratorPage = ({
                             <div className="space-y-2">
                                 <div className="relative">
                                     <Input
-                                        type="password"
+                                        type={showKeyText ? "text" : "password"}
                                         placeholder="Enter your Gemini API Key"
-                                        className="bg-background border-input font-serif pr-20"
+                                        className="bg-background border-input font-serif pr-28"
                                         value={keyInput}
                                         onChange={e => setKeyInput(e.target.value)}
                                     />
+                                    <button
+                                        type="button"
+                                        className="absolute right-20 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1"
+                                        onClick={() => setShowKeyText(!showKeyText)}
+                                    >
+                                        {showKeyText ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
                                     <Button
                                         size="sm"
                                         className="absolute right-1 top-1 h-8"
