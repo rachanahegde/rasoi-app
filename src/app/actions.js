@@ -57,7 +57,8 @@ function decrypt(encryptedData) {
 
 export async function saveApiKey(key) {
     const encryptedKey = encrypt(key);
-    cookies().set(COOKIE_NAME, encryptedKey, {
+    const cookieStore = await cookies();
+    cookieStore.set(COOKIE_NAME, encryptedKey, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60 * 24 * 30, // 30 days
@@ -68,17 +69,18 @@ export async function saveApiKey(key) {
 }
 
 export async function removeApiKey() {
-    cookies().delete(COOKIE_NAME);
+    const cookieStore = await cookies();
+    cookieStore.delete(COOKIE_NAME);
     return true;
 }
 
 export async function hasApiKey() {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     return cookieStore.has(COOKIE_NAME);
 }
 
 export async function generateRecipeAction(prompt, ingredients) {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const encryptedKey = cookieStore.get(COOKIE_NAME)?.value;
 
     if (!encryptedKey) {
