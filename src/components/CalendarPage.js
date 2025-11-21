@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-const CalendarPage = ({ recipes, mealPlan, setMealPlan, navigateTo }) => {
+const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGroceryState, navigateTo }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [viewMode, setViewMode] = useState('week'); // 'week' or 'month'
     const [selectedDay, setSelectedDay] = useState(new Date());
@@ -144,16 +144,35 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, navigateTo }) => {
                         const name = ing.toLowerCase().trim();
                         if (ingredients[name]) {
                             ingredients[name].count++;
+                            if (!ingredients[name].recipes.find(r => r.id === recipe.id)) {
+                                ingredients[name].recipes.push({ id: recipe.id, title: recipe.title });
+                            }
                         } else {
-                            ingredients[name] = { name: ing, count: 1, checked: false };
+                            ingredients[name] = {
+                                id: name,
+                                name: ing,
+                                count: 1,
+                                checked: !!groceryState[name],
+                                recipes: [{ id: recipe.id, title: recipe.title }]
+                            };
                         }
                     });
                 }
             });
         });
 
-        return Object.values(ingredients).sort((a, b) => a.name.localeCompare(b.name));
-    }, [mealPlan, recipes, calendarDays, selectedDay, viewMode]);
+        return Object.values(ingredients).sort((a, b) => {
+            if (a.checked === b.checked) return a.name.localeCompare(b.name);
+            return a.checked ? 1 : -1;
+        });
+    }, [mealPlan, recipes, calendarDays, selectedDay, viewMode, groceryState]);
+
+    const toggleGroceryItem = (name) => {
+        setGroceryState(prev => ({
+            ...prev,
+            [name]: !prev[name]
+        }));
+    };
 
     return (
         <div className="flex h-[calc(100vh-6rem)] gap-6 animate-in fade-in duration-500">
@@ -185,8 +204,8 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, navigateTo }) => {
                         <Button variant="outline" size="icon" onClick={() => navigateCalendar(-1)}>
                             <ChevronLeft className="w-4 h-4" />
                         </Button>
-                        <Button variant="outline" size="icon" onClick={() => setCurrentDate(new Date())}>
-                            Today
+                        <Button variant="outline" size="icon" onClick={() => setCurrentDate(new Date())} title="Today">
+                            <CalendarIcon className="w-4 h-4" />
                         </Button>
                         <Button variant="outline" size="icon" onClick={() => navigateCalendar(1)}>
                             <ChevronRight className="w-4 h-4" />
@@ -223,7 +242,7 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, navigateTo }) => {
                                 onDragOver={handleDragOver}
                                 onDrop={(e) => handleDrop(e, date)}
                                 className={`
-                  bg-white min-h-[100px] p-2 transition-colors cursor-pointer relative group
+                  bg-white min-h-[80px] p-2 transition-colors cursor-pointer relative group
                   ${!isCurrentMonth && viewMode === 'month' ? 'bg-stone-50/50 text-stone-400' : ''}
                   ${isSelected ? 'ring-2 ring-inset ring-orange-300 bg-orange-50/30' : 'hover:bg-stone-50'}
                 `}
@@ -283,14 +302,26 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, navigateTo }) => {
                             <div className="flex-1 overflow-y-auto p-6">
                                 {groceryList.length > 0 ? (
                                     <div className="space-y-3">
-                                        {groceryList.map((item, idx) => (
-                                            <div key={idx} className="flex items-start gap-3 p-3 rounded-lg border border-stone-100 hover:border-stone-200 hover:bg-stone-50 transition-colors group">
-                                                <div className="mt-0.5 w-5 h-5 rounded border border-stone-300 flex items-center justify-center cursor-pointer hover:border-orange-400">
-                                                    {/* Checkbox logic would go here */}
+                                        {groceryList.map((item) => (
+                                            <div key={item.id}
+                                                className={`flex items-start gap-3 p-3 rounded-lg border transition-colors group cursor-pointer ${item.checked ? 'bg-stone-50 border-stone-100' : 'bg-white border-stone-200 hover:border-orange-200'}`}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    toggleGroceryItem(item.id);
+                                                }}
+                                            >
+                                                <div className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center transition-colors ${item.checked ? 'bg-orange-500 border-orange-500 text-white' : 'border-stone-300 group-hover:border-orange-400'}`}>
+                                                    {item.checked && <Check className="w-3.5 h-3.5" />}
                                                 </div>
-                                                <div className="flex-1">
-                                                    <p className="text-sm font-medium text-stone-800 capitalize">{item.name}</p>
-                                                    {item.count > 1 && <span className="text-xs text-stone-400">x{item.count} recipes</span>}
+                                                <div className="flex-1 min-w-0">
+                                                    <p className={`text-sm font-medium capitalize transition-colors ${item.checked ? 'text-stone-400 line-through' : 'text-stone-800'}`}>{item.name}</p>
+                                                    <div className="flex flex-wrap gap-1 mt-1">
+                                                        {item.recipes.map(r => (
+                                                            <span key={r.id} className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-stone-100 text-stone-500 truncate max-w-full">
+                                                                {r.title}
+                                                            </span>
+                                                        ))}
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))}

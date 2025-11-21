@@ -38,11 +38,19 @@ export default function App() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiIngredients, setAiIngredients] = useState('');
+  const [groceryState, setGroceryState] = useState({});
 
   useEffect(() => {
     const storedRecipes = localStorage.getItem('chefs_notebook_recipes');
     if (storedRecipes) {
-      setRecipes(JSON.parse(storedRecipes));
+      const parsed = JSON.parse(storedRecipes);
+      // Update stored recipes with latest data from code (INITIAL_RECIPES)
+      // This ensures code changes (like image fixes) are reflected
+      const merged = parsed.map(p => {
+        const fresh = INITIAL_RECIPES.find(i => i.id === p.id);
+        return fresh ? fresh : p;
+      });
+      setRecipes(merged);
     } else {
       setRecipes(INITIAL_RECIPES);
       localStorage.setItem('chefs_notebook_recipes', JSON.stringify(INITIAL_RECIPES));
@@ -50,6 +58,10 @@ export default function App() {
     const storedPlan = localStorage.getItem('chefs_notebook_mealplan');
     if (storedPlan) {
       setMealPlan(JSON.parse(storedPlan));
+    }
+    const storedGroceryState = localStorage.getItem('chefs_notebook_grocery_state');
+    if (storedGroceryState) {
+      setGroceryState(JSON.parse(storedGroceryState));
     }
     setLoading(false);
   }, []);
@@ -65,6 +77,12 @@ export default function App() {
       localStorage.setItem('chefs_notebook_mealplan', JSON.stringify(mealPlan));
     }
   }, [mealPlan, loading]);
+
+  useEffect(() => {
+    if (!loading) {
+      localStorage.setItem('chefs_notebook_grocery_state', JSON.stringify(groceryState));
+    }
+  }, [groceryState, loading]);
 
   const handleSaveRecipe = (recipe) => {
     if (recipe.id) {
@@ -274,6 +292,8 @@ export default function App() {
             recipes={recipes}
             mealPlan={mealPlan}
             setMealPlan={setMealPlan}
+            groceryState={groceryState}
+            setGroceryState={setGroceryState}
             navigateTo={navigateTo}
           />
         )}

@@ -17,7 +17,7 @@ export const INITIAL_RECIPES = [
         id: '2',
         title: 'Rustic Chocolate Pie',
         description: 'Rich, creamy chocolate pie with a flaky crust.',
-        image: 'https://images.unsplash.com/photo-1572383672419-ab4779963bb6?auto=format&fit=crop&w=800&q=80',
+        image: 'https://images.unsplash.com/photo-1690763641995-b4df616fa601?q=80&w=1011&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         time: '60 min',
         difficulty: 'Medium',
         calories: '450 kcal',
