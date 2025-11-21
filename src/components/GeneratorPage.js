@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PenTool, Loader2, ChefHat, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { generateRecipe } from '@/lib/helpers';
+import { saveApiKey, hasApiKey, removeApiKey, generateRecipeAction } from '@/app/actions';
 
 const GeneratorPage = ({
     aiPrompt,
@@ -15,37 +15,54 @@ const GeneratorPage = ({
     const [prompt, setPrompt] = useState(aiPrompt || '');
     const [ingredients, setIngredients] = useState(aiIngredients || '');
     const [generated, setGenerated] = useState(null);
-    const [apiKey, setApiKey] = useState('');
-    const [showApiKey, setShowApiKey] = useState(false);
+
+    // Key management state
+    const [keyInput, setKeyInput] = useState('');
+    const [isKeySet, setIsKeySet] = useState(false);
+    const [showKeyInput, setShowKeyInput] = useState(false); // For toggling visibility of input when key is already set
+    const [checkingKey, setCheckingKey] = useState(true);
 
     useEffect(() => {
-        const storedKey = localStorage.getItem('gemini_api_key');
-        if (storedKey) setApiKey(storedKey);
+        checkKeyStatus();
     }, []);
 
-    useEffect(() => {
-        if (apiKey) {
-            localStorage.setItem('gemini_api_key', apiKey);
-        }
-    }, [apiKey]);
+    const checkKeyStatus = async () => {
+        const hasKey = await hasApiKey();
+        setIsKeySet(hasKey);
+        setCheckingKey(false);
+    };
+
+    const handleSaveKey = async () => {
+        if (!keyInput.trim()) return;
+        await saveApiKey(keyInput);
+        setIsKeySet(true);
+        setKeyInput('');
+        setShowKeyInput(false);
+    };
+
+    const handleRemoveKey = async () => {
+        await removeApiKey();
+        setIsKeySet(false);
+        setShowKeyInput(true);
+    };
 
     useEffect(() => {
         return () => { setAiPrompt(''); setAiIngredients(''); }
     }, [setAiPrompt, setAiIngredients]);
 
     const handleGenerate = async () => {
-        if (!apiKey) {
-            alert("Please enter your Gemini API Key first.");
+        if (!isKeySet) {
+            alert("Please set your Gemini API Key first.");
             return;
         }
         setGenLoading(true);
         setGenerated(null);
         try {
-            const result = await generateRecipe(prompt, ingredients, apiKey);
+            const result = await generateRecipeAction(prompt, ingredients);
             setGenerated(result);
         } catch (error) {
             console.error("Generation failed:", error);
-            alert("Failed to generate recipe. Please check your API key and try again.");
+            alert(error.message || "Failed to generate recipe.");
         }
         setGenLoading(false);
     };
@@ -62,24 +79,60 @@ const GeneratorPage = ({
                 </div>
 
                 <div className="space-y-6 flex-1">
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Gemini API Key</label>
-                        <div className="relative">
-                            <Input
-                                type={showApiKey ? "text" : "password"}
-                                placeholder="Enter your Gemini API Key"
-                                className="bg-background border-input font-serif pr-10"
-                                value={apiKey}
-                                onChange={e => setApiKey(e.target.value)}
-                            />
-                            <button
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                onClick={() => setShowApiKey(!showApiKey)}
-                            >
-                                {showApiKey ? "Hide" : "Show"}
-                            </button>
+
+                    {/* API Key Section */}
+                    <div className="bg-muted/30 p-4 rounded-lg border border-border/50">
+                        <div className="flex justify-between items-center mb-2">
+                            <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Gemini API Key</label>
+                            {isKeySet && (
+                                <button
+                                    onClick={() => setShowKeyInput(!showKeyInput)}
+                                    className="text-xs text-primary hover:underline"
+                                >
+                                    {showKeyInput ? 'Cancel Update' : 'Update Key'}
+                                </button>
+                            )}
                         </div>
-                        <p className="text-xs text-muted-foreground">Your key is stored locally in your browser.</p>
+
+                        {(!isKeySet || showKeyInput) ? (
+                            <div className="space-y-2">
+                                <div className="relative">
+                                    <Input
+                                        type="password"
+                                        placeholder="Enter your Gemini API Key"
+                                        className="bg-background border-input font-serif pr-20"
+                                        value={keyInput}
+                                        onChange={e => setKeyInput(e.target.value)}
+                                    />
+                                    <Button
+                                        size="sm"
+                                        className="absolute right-1 top-1 h-8"
+                                        onClick={handleSaveKey}
+                                        disabled={!keyInput}
+                                    >
+                                        Save
+                                    </Button>
+                                </div>
+                                <p className="text-[10px] text-muted-foreground">
+                                    Key is stored securely in an HttpOnly cookie and never exposed to client-side code.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-between bg-background p-2 rounded border border-border">
+                                <div className="flex items-center gap-2 text-sm text-green-600">
+                                    <Sparkles className="w-4 h-4" />
+                                    <span className="font-medium">API Key Active</span>
+                                </div>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-6 text-xs text-destructive hover:text-destructive/90"
+                                    onClick={handleRemoveKey}
+                                >
+                                    Remove
+                                </Button>
+                            </div>
+                        )}
                     </div>
 
                     <div className="space-y-2">
@@ -105,7 +158,7 @@ const GeneratorPage = ({
                     <div className="pt-4">
                         <Button
                             onClick={handleGenerate}
-                            disabled={genLoading || !apiKey || (!prompt && !ingredients)}
+                            disabled={genLoading || !isKeySet || (!prompt && !ingredients)}
                             className="w-full h-14 text-lg bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 font-serif"
                         >
                             {genLoading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Drafting...</> : 'Draft Recipe'}
