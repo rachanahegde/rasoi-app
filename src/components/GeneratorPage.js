@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PenTool, Loader2, ChefHat, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { mockGenerateRecipe } from '@/lib/helpers';
+import { generateRecipe } from '@/lib/helpers';
 
 const GeneratorPage = ({
     aiPrompt,
@@ -15,16 +15,38 @@ const GeneratorPage = ({
     const [prompt, setPrompt] = useState(aiPrompt || '');
     const [ingredients, setIngredients] = useState(aiIngredients || '');
     const [generated, setGenerated] = useState(null);
+    const [apiKey, setApiKey] = useState('');
+    const [showApiKey, setShowApiKey] = useState(false);
+
+    useEffect(() => {
+        const storedKey = localStorage.getItem('gemini_api_key');
+        if (storedKey) setApiKey(storedKey);
+    }, []);
+
+    useEffect(() => {
+        if (apiKey) {
+            localStorage.setItem('gemini_api_key', apiKey);
+        }
+    }, [apiKey]);
 
     useEffect(() => {
         return () => { setAiPrompt(''); setAiIngredients(''); }
     }, [setAiPrompt, setAiIngredients]);
 
     const handleGenerate = async () => {
+        if (!apiKey) {
+            alert("Please enter your Gemini API Key first.");
+            return;
+        }
         setGenLoading(true);
         setGenerated(null);
-        const result = await mockGenerateRecipe(prompt, ingredients);
-        setGenerated(result);
+        try {
+            const result = await generateRecipe(prompt, ingredients, apiKey);
+            setGenerated(result);
+        } catch (error) {
+            console.error("Generation failed:", error);
+            alert("Failed to generate recipe. Please check your API key and try again.");
+        }
         setGenLoading(false);
     };
 
@@ -32,7 +54,7 @@ const GeneratorPage = ({
         <div className="h-[calc(100vh-6rem)] flex flex-col lg:flex-row gap-8 animate-in fade-in duration-500">
             {/* Input Panel - Styled like a notepad */}
             <div className="flex-1 paper-card p-8 rounded-xl bg-card shadow-sm flex flex-col overflow-y-auto border border-border">
-                <div className="mb-8 pb-4 border-b-2 border-dotted border-border">
+                <div className="mb-6 pb-4 border-b-2 border-dotted border-border">
                     <h1 className="text-3xl font-serif font-bold mb-2 flex items-center gap-2 text-foreground">
                         <PenTool className="w-6 h-6 text-muted-foreground" /> Creative Corner
                     </h1>
@@ -40,6 +62,26 @@ const GeneratorPage = ({
                 </div>
 
                 <div className="space-y-6 flex-1">
+                    <div className="space-y-2">
+                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Gemini API Key</label>
+                        <div className="relative">
+                            <Input
+                                type={showApiKey ? "text" : "password"}
+                                placeholder="Enter your Gemini API Key"
+                                className="bg-background border-input font-serif pr-10"
+                                value={apiKey}
+                                onChange={e => setApiKey(e.target.value)}
+                            />
+                            <button
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                onClick={() => setShowApiKey(!showApiKey)}
+                            >
+                                {showApiKey ? "Hide" : "Show"}
+                            </button>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Your key is stored locally in your browser.</p>
+                    </div>
+
                     <div className="space-y-2">
                         <label className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Idea Log</label>
                         <textarea
@@ -63,7 +105,7 @@ const GeneratorPage = ({
                     <div className="pt-4">
                         <Button
                             onClick={handleGenerate}
-                            disabled={genLoading || (!prompt && !ingredients)}
+                            disabled={genLoading || !apiKey || (!prompt && !ingredients)}
                             className="w-full h-14 text-lg bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 font-serif"
                         >
                             {genLoading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Drafting...</> : 'Draft Recipe'}
