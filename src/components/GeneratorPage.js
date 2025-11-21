@@ -136,12 +136,18 @@ const GeneratorPage = ({
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Idea Log</label>
+                        <div className="flex justify-between items-center">
+                            <label className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Idea Log</label>
+                            <span className="text-xs text-muted-foreground">
+                                {prompt.length}/150
+                            </span>
+                        </div>
                         <textarea
                             className="w-full p-4 rounded-lg border border-input bg-background focus:ring-2 focus:ring-ring transition-all min-h-[120px] font-serif text-lg leading-relaxed shadow-inner"
                             placeholder="I'm thinking something with basil and pasta, maybe spicy..."
                             value={prompt}
                             onChange={e => setPrompt(e.target.value)}
+                            maxLength={150}
                         />
                     </div>
 

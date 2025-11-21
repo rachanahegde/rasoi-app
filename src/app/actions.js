@@ -95,53 +95,36 @@ export async function generateRecipeAction(prompt, ingredients) {
         throw new Error('Failed to decrypt API key. Please re-enter your key.');
     }
 
-    const systemPrompt = `
-    You are a professional chef. Create a unique, detailed recipe based on the user's request.
-    
-    User Request: ${prompt}
-    Available Ingredients: ${ingredients}
-    
-    Return the response ONLY as a valid JSON object with the following structure:
+    const systemPrompt = `You are a chef. Create a concise recipe based on: "${prompt}" using: ${ingredients || 'any ingredients'}.
+
+    Return ONLY valid JSON (no markdown):
     {
-        "title": "Recipe Title",
-        "description": "A brief, appetizing description",
-        "time": "Total time (e.g. 45 min)",
-        "difficulty": "Easy/Medium/Hard",
-        "calories": "Estimated calories per serving (e.g. 450 kcal)",
-        "tags": ["Tag1", "Tag2"],
-        "ingredients": ["Ingredient 1", "Ingredient 2"],
-        "steps": ["Step 1", "Step 2"]
+    "title": "Recipe name (max 8 words)",
+    "description": "Brief description (max 20 words)",
+    "time": "e.g. 30 min",
+    "difficulty": "Easy/Medium/Hard",
+    "calories": "e.g. 400 kcal",
+    "tags": ["2-3 tags"],
+    "ingredients": ["List 6-10 ingredients with quantities"],
+    "steps": ["5-8 clear, concise steps (each max 15 words)"]
     }
-    Do not include any markdown formatting like \`\`\`json. Just the raw JSON object.
-    `;
+
+    Keep it brief and practical.`;
 
     try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{
-                        text: systemPrompt
-                    }]
-                }]
-            })
+        // Import the SDK dynamically to use the decrypted API key
+        const { GoogleGenAI } = await import('@google/genai');
+
+        // Initialize the client with the decrypted API key
+        const ai = new GoogleGenAI({ apiKey });
+
+        // Generate content using the SDK
+        const response = await ai.models.generateContent({
+            model: "gemini-2.0-flash-exp",
+            contents: systemPrompt,
         });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error?.message || 'Failed to generate recipe');
-        }
-
-        const data = await response.json();
-
-        if (!data.candidates || data.candidates.length === 0) {
-            throw new Error('No response from AI');
-        }
-
-        const text = data.candidates[0].content.parts[0].text;
+        const text = response.text;
 
         // Clean up potential markdown code blocks
         const jsonStr = text.replace(/```json/g, '').replace(/```/g, '').trim();
