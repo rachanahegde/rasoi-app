@@ -2,6 +2,8 @@ Rasoi is a modern web app for saving, organizing, and generating recipes—desig
 
 🌿 ✨ Features (COMING SOON...)
 
+Initial color palette (for regular mode): https://coolors.co/palette/6f1d1b-bb9457-432818-99582a-ffe6a7 
+
 📝 Notebook-inspired UI
 A warm, personal design that mimics the feel of a handwritten cookbook.
 
