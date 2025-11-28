@@ -43,7 +43,7 @@ const Dashboard = ({
                 </div>
                 <div className="flex gap-3">
                     <Button onClick={() => navigateTo('generate')} variant="primary" className="rounded-full px-6">
-                        <Sparkles className="w-4 h-4 mr-2 text-primary-foreground" /> Draft New Idea
+                        <Sparkles className="w-4 h-4 mr-2 text-primary-foreground" /> Generate Recipe
                     </Button>
                 </div>
             </div>

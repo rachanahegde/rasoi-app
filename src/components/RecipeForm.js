@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, X, Plus } from 'lucide-react';
+import { ArrowLeft, X, Plus, Upload, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -11,9 +11,12 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
         difficulty: 'Easy',
         ingredients: [''],
         steps: [''],
+        image: '',
         ...initialData,
         tags: initialData.tags ? initialData.tags.join(', ') : ''
     });
+    const [imageUrl, setImageUrl] = useState(initialData.image || '');
+    const [showUrlInput, setShowUrlInput] = useState(false);
     const handleChange = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
     const handleArrayChange = (field, index, value) => {
         const newArray = [...formData[field]];
@@ -22,6 +25,30 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
     };
     const addArrayItem = (field) => setFormData(prev => ({ ...prev, [field]: [...prev[field], ''] }));
     const removeArrayItem = (field, index) => setFormData(prev => ({ ...prev, [field]: prev[field].filter((_, i) => i !== index) }));
+    
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64String = reader.result;
+                setImageUrl(base64String);
+                setFormData(prev => ({ ...prev, image: base64String }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleImageUrlChange = (url) => {
+        setImageUrl(url);
+        setFormData(prev => ({ ...prev, image: url }));
+    };
+
+    const removeImage = () => {
+        setImageUrl('');
+        setFormData(prev => ({ ...prev, image: '' }));
+        setShowUrlInput(false);
+    };
     const handleSubmit = (e) => {
         e.preventDefault();
         const recipeToSave = {
@@ -30,7 +57,7 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
             tags: formData.tags.split(',').map(t => t.trim()).filter(t => t),
             ingredients: formData.ingredients.filter(i => i),
             steps: formData.steps.filter(s => s),
-            image: initialData.image || 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=800&q=80'
+            image: formData.image || 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=800&q=80'
         };
         handleSaveRecipe(recipeToSave);
     };
@@ -77,6 +104,90 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
                             onChange={e => handleChange('description', e.target.value)}
                             placeholder="Jot down your thoughts..."
                         />
+                    </div>
+
+                    <div className="space-y-4">
+                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Recipe Image</label>
+                        
+                        {imageUrl ? (
+                            <div className="relative group">
+                                <div className="rounded-xl overflow-hidden border-2 border-border shadow-sm">
+                                    <img 
+                                        src={imageUrl} 
+                                        alt="Recipe preview" 
+                                        className="w-full h-64 object-cover"
+                                    />
+                                </div>
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={removeImage}
+                                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                    <X className="w-4 h-4 mr-1" /> Remove
+                                </Button>
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                <div className="relative">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        className="hidden"
+                                        id="image-upload"
+                                    />
+                                    <label
+                                        htmlFor="image-upload"
+                                        className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-border rounded-xl cursor-pointer bg-muted/50 hover:bg-muted transition-colors group"
+                                    >
+                                        <Upload className="w-10 h-10 text-muted-foreground group-hover:text-foreground transition-colors mb-2" />
+                                        <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+                                            Click to upload an image
+                                        </span>
+                                        <span className="text-xs text-muted-foreground mt-1">
+                                            PNG, JPG, GIF up to 10MB
+                                        </span>
+                                    </label>
+                                </div>
+                                
+                                <div className="flex items-center gap-3">
+                                    <div className="flex-1 h-px bg-border"></div>
+                                    <span className="text-xs text-muted-foreground uppercase tracking-wider">or</span>
+                                    <div className="flex-1 h-px bg-border"></div>
+                                </div>
+
+                                {showUrlInput ? (
+                                    <div className="flex gap-2">
+                                        <Input
+                                            type="url"
+                                            placeholder="Paste image URL..."
+                                            value={imageUrl}
+                                            onChange={(e) => handleImageUrlChange(e.target.value)}
+                                            className="bg-muted"
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            onClick={() => setShowUrlInput(false)}
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => setShowUrlInput(true)}
+                                        className="w-full"
+                                    >
+                                        <ImageIcon className="w-4 h-4 mr-2" />
+                                        Use Image URL
+                                    </Button>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     <div className="space-y-4">
