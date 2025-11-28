@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, X, Plus, Upload, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/context/ToastContext';
 
 const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
     const [formData, setFormData] = useState({
@@ -17,13 +18,19 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
     });
     const [imageUrl, setImageUrl] = useState(initialData.image || '');
     const [showUrlInput, setShowUrlInput] = useState(false);
+    const toast = useToast();
     const handleChange = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
     const handleArrayChange = (field, index, value) => {
         const newArray = [...formData[field]];
         newArray[index] = value;
         setFormData(prev => ({ ...prev, [field]: newArray }));
     };
-    const addArrayItem = (field) => setFormData(prev => ({ ...prev, [field]: [...prev[field], ''] }));
+    const addArrayItem = (field) => {
+        setFormData(prev => ({ ...prev, [field]: [...prev[field], ''] }));
+        if (field === 'ingredients') {
+            toast.success('✓ Ingredient added');
+        }
+    };
     const removeArrayItem = (field, index) => setFormData(prev => ({ ...prev, [field]: prev[field].filter((_, i) => i !== index) }));
     
     const handleImageUpload = (e) => {

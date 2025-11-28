@@ -3,6 +3,7 @@ import { PenTool, Loader2, ChefHat, Sparkles, Upload, Eye, EyeOff } from 'lucide
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { saveApiKey, hasApiKey, removeApiKey, generateRecipeAction } from '@/app/actions';
+import { useToast } from '@/context/ToastContext';
 
 const GeneratorPage = ({
     aiPrompt,
@@ -16,6 +17,7 @@ const GeneratorPage = ({
     const [ingredients, setIngredients] = useState(aiIngredients || '');
     const [generated, setGenerated] = useState(null);
     const [customImage, setCustomImage] = useState(null);
+    const toast = useToast();
 
     // Key management state
     const [keyInput, setKeyInput] = useState('');
@@ -63,9 +65,10 @@ const GeneratorPage = ({
         try {
             const result = await generateRecipeAction(prompt, ingredients);
             setGenerated(result);
+            toast.success('✓ AI variation ready! Review and save below.');
         } catch (error) {
             console.error("Generation failed:", error);
-            alert(error.message || "Failed to generate recipe.");
+            toast.error('✗ Failed to generate recipe. Please try again.');
         }
         setGenLoading(false);
     };
