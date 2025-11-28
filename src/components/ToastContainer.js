@@ -63,7 +63,12 @@ const Toast = ({ toast }) => {
             }}
         >
             {/* Sticky note tape effect */}
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-16 h-4 bg-amber-100/60 dark:bg-amber-900/30 border border-amber-200/50 dark:border-amber-700/50 rotate-1 backdrop-blur-sm"></div>
+            <div className="
+                absolute -top-2 left-1/2 -translate-x-1/2 w-16 h-4
+                bg-amber-200/80 dark:bg-amber-300/40
+                border border-amber-400/60 dark:border-amber-300/30
+                rotate-1 backdrop-blur-sm shadow-sm
+            "></div>
             
             <div className="flex items-start gap-3">
                 {getIcon()}
