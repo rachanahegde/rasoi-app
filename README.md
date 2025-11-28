@@ -66,6 +66,3 @@ Rasoi currently focuses on UI/UX, recipe creation, and local functionality. AI g
 - Pantry management
 - Import/export JSON
 - Bookmarking & favorites
-
-🍛 Why “Rasoi”?
-Rasoi is derived from the Sanskrit/Hindi word for kitchen — the heart of home cooking. The app embodies that same warmth: personal, welcoming, and crafted for everyday use.
