@@ -23,27 +23,19 @@ const Toast = ({ toast }) => {
     const getIcon = () => {
         switch (toast.type) {
             case 'success':
-                return <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />;
+                return <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />;
             case 'error':
-                return <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />;
+                return <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0" />;
             case 'info':
-                return <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />;
+                return <Info className="w-5 h-5 text-secondary flex-shrink-0" />;
             default:
-                return <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />;
+                return <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />;
         }
     };
 
     const getColors = () => {
-        switch (toast.type) {
-            case 'success':
-                return 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800';
-            case 'error':
-                return 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800';
-            case 'info':
-                return 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800';
-            default:
-                return 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800';
-        }
+        // Using app theme colors: bg-card (cream), border-border (brown)
+        return 'bg-card border-border text-card-foreground';
     };
 
     return (
@@ -62,17 +54,12 @@ const Toast = ({ toast }) => {
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), inset 0 1px 0 0 rgba(255, 255, 255, 0.5)',
             }}
         >
-            {/* Sticky note tape effect */}
-            <div className="
-                absolute -top-2 left-1/2 -translate-x-1/2 w-16 h-4
-                bg-amber-200/80 dark:bg-amber-300/40
-                border border-amber-400/60 dark:border-amber-300/30
-                rotate-1 backdrop-blur-sm shadow-sm
-            "></div>
+            {/* Sticky note tape effect - using muted (tan) color from palette */}
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-16 h-4 bg-muted/80 border border-border/30 rotate-1 backdrop-blur-sm shadow-sm"></div>
             
             <div className="flex items-start gap-3">
                 {getIcon()}
-                <p className="flex-1 text-sm font-medium text-foreground font-serif leading-relaxed">
+                <p className="flex-1 text-sm font-medium font-serif leading-relaxed">
                     {toast.message}
                 </p>
                 <button
