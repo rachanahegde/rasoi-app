@@ -1,5 +1,7 @@
 Rasoi is a modern web app for saving, organizing, and generating recipes—designed with a warm, analog-inspired aesthetic.
 
+🍛 Why “Rasoi”? Rasoi is derived from the Sanskrit/Hindi word for kitchen — the heart of home cooking. The app embodies that same warmth: personal, welcoming, and crafted for everyday use.
+
 # Preview
 <img width="800" height="650" alt="Screenshot 2025-11-24 at 21 21 45" src="https://github.com/user-attachments/assets/a2f6b27a-1f43-43ca-b61f-68344543678c" />
 
