@@ -10,7 +10,8 @@ import {
   Heart,
   Calendar as CalendarIcon,
   PenTool,
-  Moon
+  Moon,
+  User
 } from 'lucide-react';
 
 import DottedBackground from '@/components/DottedBackground';
@@ -189,8 +190,11 @@ function AppContent() {
               className={`w-6 h-6 cursor-pointer hover:text-foreground transition-colors ${darkMode ? 'text-foreground fill-current' : 'text-muted-foreground'}`}
               onClick={toggleDarkMode}
             />
-            <div className="w-10 h-10 rounded-full bg-muted overflow-hidden border-2 border-background shadow-sm grayscale hover:grayscale-0 transition-all">
-              <img src="https://i.pravatar.cc/150?img=12" alt="User" />
+            <div 
+              className="w-10 h-10 rounded-full bg-muted flex items-center justify-center border-2 border-border shadow-sm cursor-pointer hover:bg-muted-foreground/20 transition-all"
+              onClick={() => navigateTo('profile')}
+            >
+              <User className="w-5 h-5 text-muted-foreground" />
             </div>
           </div>
         </aside>
@@ -284,6 +288,12 @@ function AppContent() {
               setGroceryState={setGroceryState}
               navigateTo={navigateTo}
             />
+          )}
+          {view === 'profile' && (
+            <div className="max-w-4xl mx-auto">
+              <h1 className="text-4xl font-serif font-bold text-foreground mb-4">Profile</h1>
+              <p className="text-muted-foreground font-serif">Coming soon...</p>
+            </div>
           )}
         </main>
       </div>
