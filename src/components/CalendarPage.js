@@ -48,7 +48,7 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
             return days;
         }
 
-        // For month view
+        // For month view - use 5 rows instead of 6 to minimize padding days
         const days = [];
         // Pad start
         const startPadding = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
@@ -62,8 +62,8 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
             days.push(new Date(year, month, i));
         }
 
-        // Pad end
-        const remaining = 42 - days.length; // 6 rows * 7 cols
+        // Pad end to complete 5 rows (35 days total)
+        const remaining = 35 - days.length; // 5 rows * 7 cols
         for (let i = 1; i <= remaining; i++) {
             days.push(new Date(year, month + 1, i));
         }
@@ -354,67 +354,73 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                         </div>
                     </div>
                 ) : (
-                    <div className="flex-1 grid grid-cols-7 grid-rows-6 bg-border gap-px overflow-y-auto">
-                        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-                            <div key={day} className="bg-card py-1 px-2 text-center text-xs font-bold text-muted-foreground uppercase tracking-wider sticky top-0 z-10">
-                                {day}
-                            </div>
-                        ))}
-
-                        {calendarDays.map((date, i) => {
-                            const isToday = date.toDateString() === new Date().toDateString();
-                            const isSelected = selectedDay && date.toDateString() === selectedDay.toDateString();
-                            const isCurrentMonth = date.getMonth() === currentDate.getMonth();
-                            const dateKey = date.toDateString();
-                            const dayRecipes = mealPlan[dateKey] || [];
-
-                        return (
-                            <div
-                                key={i}
-                                onClick={() => handleDayClick(date)}
-                                onDragOver={handleDragOver}
-                                onDrop={(e) => handleDrop(e, date)}
-                                className={`
-                  bg-background ${viewMode === 'week' ? 'min-h-[120px]' : 'min-h-[80px]'} p-2 transition-colors cursor-pointer relative group
-                  ${!isCurrentMonth && viewMode === 'month' ? 'bg-muted/50 text-muted-foreground' : ''}
-                  ${isSelected ? 'ring-2 ring-inset ring-primary bg-primary/10' : 'hover:bg-muted'}
-                `}
-                            >
-                                <div className="flex justify-between items-start mb-2">
-                                    <span className={`
-                    w-7 h-7 flex items-center justify-center rounded-full text-sm font-serif
-                    ${isToday ? 'bg-primary text-primary-foreground shadow-md' : 'text-muted-foreground'}
-                  `}>
-                                        {date.getDate()}
-                                    </span>
-                                    {dayRecipes.length > 0 && (
-                                        <Badge variant="secondary" className="text-[10px] px-1.5 h-5 bg-accent text-accent-foreground hover:bg-accent/90 border-accent">
-                                            {dayRecipes.length}
-                                        </Badge>
-                                    )}
+                    <div className="flex-1 flex flex-col bg-border gap-px overflow-hidden">
+                        {/* Header Row - Fixed Height */}
+                        <div className="grid grid-cols-7 bg-border gap-px h-6 shrink-0">
+                            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+                                <div key={day} className="bg-card flex items-center justify-center text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                                    {day}
                                 </div>
+                            ))}
+                        </div>
 
-                                <div className="space-y-1.5">
-                                    {dayRecipes.map((rId, idx) => {
-                                        const recipe = recipes.find(r => r.id === rId);
-                                        if (!recipe) return null;
-                                        return (
-                                            <div key={`${dateKey}-${idx}`} className="text-xs p-1.5 rounded bg-background border border-border shadow-sm truncate font-medium text-foreground flex items-center gap-1 group/item">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                                                <span className="truncate">{recipe.title}</span>
-                                            </div>
-                                        );
-                                    })}
+                        {/* Day Cells - 5 rows grid */}
+                        <div className="flex-1 grid grid-cols-7 grid-rows-5 bg-border gap-px overflow-y-auto">
+                            {calendarDays.map((date, i) => {
+                                const isToday = date.toDateString() === new Date().toDateString();
+                                const isSelected = selectedDay && date.toDateString() === selectedDay.toDateString();
+                                const isCurrentMonth = date.getMonth() === currentDate.getMonth();
+                                const dateKey = date.toDateString();
+                                const dayRecipes = mealPlan[dateKey] || [];
+
+                            return (
+                                <div
+                                    key={i}
+                                    onClick={() => handleDayClick(date)}
+                                    onDragOver={handleDragOver}
+                                    onDrop={(e) => handleDrop(e, date)}
+                                    className={`
+                                        bg-background min-h-[80px] p-2 transition-colors cursor-pointer relative group
+                                        ${!isCurrentMonth ? 'bg-muted/50 text-muted-foreground' : ''}
+                                        ${isSelected ? 'ring-2 ring-inset ring-primary bg-primary/10' : 'hover:bg-muted'}
+                                    `}
+                                >
+                                    <div className="flex justify-between items-start mb-2">
+                                        <span className={`
+                                            w-7 h-7 flex items-center justify-center rounded-full text-sm font-serif
+                                            ${isToday ? 'bg-primary text-primary-foreground shadow-md' : 'text-muted-foreground'}
+                                        `}>
+                                            {date.getDate()}
+                                        </span>
+                                        {dayRecipes.length > 0 && (
+                                            <Badge variant="secondary" className="text-[10px] px-1.5 h-5 bg-accent text-accent-foreground hover:bg-accent/90 border-accent">
+                                                {dayRecipes.length}
+                                            </Badge>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        {dayRecipes.map((rId, idx) => {
+                                            const recipe = recipes.find(r => r.id === rId);
+                                            if (!recipe) return null;
+                                            return (
+                                                <div key={`${dateKey}-${idx}`} className="text-xs p-1.5 rounded bg-background border border-border shadow-sm truncate font-medium text-foreground flex items-center gap-1 group/item">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                                                    <span className="truncate">{recipe.title}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {/* Add Button on Hover */}
+                                    <button className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary items-center justify-center hidden group-hover:flex transition-colors">
+                                        <Plus className="w-4 h-4" />
+                                    </button>
                                 </div>
-
-                                {/* Add Button on Hover */}
-                                <button className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary items-center justify-center hidden group-hover:flex transition-colors">
-                                    <Plus className="w-4 h-4" />
-                                </button>
-                            </div>
-                        );
-                    })}
-                </div>
+                            );
+                        })}
+                        </div>
+                    </div>
             )}
             </div>
 
