@@ -380,12 +380,13 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                     onDragOver={handleDragOver}
                                     onDrop={(e) => handleDrop(e, date)}
                                     className={`
-                                        bg-background min-h-[80px] p-2 transition-colors cursor-pointer relative group
+                                        bg-background p-2 transition-colors cursor-pointer relative group flex flex-col h-full
                                         ${!isCurrentMonth ? 'bg-muted/50 text-muted-foreground' : ''}
                                         ${isSelected ? 'ring-2 ring-inset ring-primary bg-primary/10' : 'hover:bg-muted'}
                                     `}
                                 >
-                                    <div className="flex justify-between items-start mb-2">
+                                    {/* Header - Date and Badge (Fixed) */}
+                                    <div className="flex justify-between items-start mb-2 shrink-0">
                                         <span className={`
                                             w-7 h-7 flex items-center justify-center rounded-full text-sm font-serif
                                             ${isToday ? 'bg-primary text-primary-foreground shadow-md' : 'text-muted-foreground'}
@@ -399,7 +400,8 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                         )}
                                     </div>
 
-                                    <div className="space-y-1.5">
+                                    {/* Recipe List - Scrollable */}
+                                    <div className="flex-1 overflow-y-auto space-y-1.5 pr-1 custom-scrollbar min-h-0">
                                         {dayRecipes.map((rId, idx) => {
                                             const recipe = recipes.find(r => r.id === rId);
                                             if (!recipe) return null;
