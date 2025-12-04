@@ -22,6 +22,8 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
     const [showGroceryList, setShowGroceryList] = useState(false);
     const [isPanelOpen, setIsPanelOpen] = useState(true);
     const [draggedRecipe, setDraggedRecipe] = useState(null);
+    const [draggedGroceryItem, setDraggedGroceryItem] = useState(null);
+    const [dragOverIndex, setDragOverIndex] = useState(null);
 
     // Helper to get days for the grid
     const calendarDays = useMemo(() => {
@@ -127,9 +129,6 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
         const ingredients = {};
 
         // Get relevant dates based on view or selection
-        // For simplicity, let's generate for the currently visible week/month or selected day
-        // Let's do it for the selected week if in week view, or just selected day
-
         const datesToInclude = viewMode === 'week' ? calendarDays : [selectedDay];
 
         datesToInclude.forEach(date => {
@@ -161,7 +160,32 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
             });
         });
 
-        return Object.values(ingredients).sort((a, b) => {
+        const itemsArray = Object.values(ingredients);
+        
+        // Get custom order from groceryState
+        const customOrder = groceryState['_order'] || [];
+        
+        // Sort by custom order if it exists, otherwise by checked status and name
+        if (customOrder.length > 0) {
+            return itemsArray.sort((a, b) => {
+                const aIndex = customOrder.indexOf(a.id);
+                const bIndex = customOrder.indexOf(b.id);
+                
+                // If both have custom positions, use those
+                if (aIndex !== -1 && bIndex !== -1) {
+                    return aIndex - bIndex;
+                }
+                // If only one has a custom position, it goes first
+                if (aIndex !== -1) return -1;
+                if (bIndex !== -1) return 1;
+                
+                // Otherwise, use default sorting
+                if (a.checked === b.checked) return a.name.localeCompare(b.name);
+                return a.checked ? 1 : -1;
+            });
+        }
+        
+        return itemsArray.sort((a, b) => {
             if (a.checked === b.checked) return a.name.localeCompare(b.name);
             return a.checked ? 1 : -1;
         });
@@ -172,6 +196,48 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
             ...prev,
             [name]: !prev[name]
         }));
+    };
+
+    // Drag and drop handlers for grocery list
+    const handleGroceryDragStart = (e, item, index) => {
+        setDraggedGroceryItem({ item, index });
+        e.dataTransfer.effectAllowed = 'move';
+    };
+
+    const handleGroceryDragOver = (e, index) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        setDragOverIndex(index);
+    };
+
+    const handleGroceryDrop = (e, dropIndex) => {
+        e.preventDefault();
+        
+        if (draggedGroceryItem === null || draggedGroceryItem.index === dropIndex) {
+            setDraggedGroceryItem(null);
+            setDragOverIndex(null);
+            return;
+        }
+
+        // Reorder the list
+        const newList = [...groceryList];
+        const [removed] = newList.splice(draggedGroceryItem.index, 1);
+        newList.splice(dropIndex, 0, removed);
+
+        // Save the new order
+        const newOrder = newList.map(item => item.id);
+        setGroceryState(prev => ({
+            ...prev,
+            '_order': newOrder
+        }));
+
+        setDraggedGroceryItem(null);
+        setDragOverIndex(null);
+    };
+
+    const handleGroceryDragEnd = () => {
+        setDraggedGroceryItem(null);
+        setDragOverIndex(null);
     };
 
     return (
@@ -302,15 +368,33 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                             <div className="flex-1 overflow-y-auto p-6">
                                 {groceryList.length > 0 ? (
                                     <div className="space-y-3">
-                                        {groceryList.map((item) => (
-                                            <div key={item.id}
-                                                className={`flex items-start gap-3 p-3 rounded-lg border transition-colors group cursor-pointer ${item.checked ? 'bg-muted border-border' : 'bg-card border-border hover:border-primary/50'}`}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    toggleGroceryItem(item.id);
-                                                }}
+                                        {groceryList.map((item, index) => (
+                                            <div 
+                                                key={item.id}
+                                                draggable
+                                                onDragStart={(e) => handleGroceryDragStart(e, item, index)}
+                                                onDragOver={(e) => handleGroceryDragOver(e, index)}
+                                                onDrop={(e) => handleGroceryDrop(e, index)}
+                                                onDragEnd={handleGroceryDragEnd}
+                                                className={`
+                                                    flex items-start gap-3 p-3 rounded-lg border transition-all group cursor-move
+                                                    ${item.checked ? 'bg-muted border-border' : 'bg-card border-border hover:border-primary/50'}
+                                                    ${draggedGroceryItem?.index === index ? 'opacity-50' : ''}
+                                                    ${dragOverIndex === index && draggedGroceryItem?.index !== index ? 'border-primary border-2 scale-105' : ''}
+                                                `}
                                             >
-                                                <div className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center transition-colors ${item.checked ? 'bg-primary border-primary text-primary-foreground' : 'border-input group-hover:border-primary'}`}>
+                                                {/* Drag Handle */}
+                                                <div className="mt-1 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing">
+                                                    <MoreHorizontal className="w-4 h-4 rotate-90" />
+                                                </div>
+                                                
+                                                <div 
+                                                    className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center transition-colors cursor-pointer ${item.checked ? 'bg-primary border-primary text-primary-foreground' : 'border-input group-hover:border-primary'}`}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleGroceryItem(item.id);
+                                                    }}
+                                                >
                                                     {item.checked && <Check className="w-3.5 h-3.5" />}
                                                 </div>
                                                 <div className="flex-1 min-w-0">

@@ -10,6 +10,7 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
         description: '',
         time: '',
         difficulty: 'Easy',
+        calories: '',
         ingredients: [''],
         steps: [''],
         image: '',
@@ -101,6 +102,19 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
                                 <option>Hard</option>
                             </select>
                         </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Calories</label>
+                        <Input 
+                            type="number" 
+                            value={formData.calories} 
+                            onChange={e => handleChange('calories', e.target.value)} 
+                            placeholder="e.g. 350" 
+                            className="bg-muted" 
+                            min="0"
+                        />
+                        <p className="text-xs text-muted-foreground italic">Optional - calories per serving</p>
                     </div>
 
                     <div className="space-y-2">
