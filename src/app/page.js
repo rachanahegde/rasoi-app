@@ -257,15 +257,22 @@ function AppContent() {
       filtered = filtered.filter(r => r.favorite);
     }
     if (filterRecent) {
-      // Filter recipes that have been added to meal plan in the last 7 days
-      const recentActivity = activities
-        .filter(a => a.type === 'added_to_meal_plan' && (Date.now() - new Date(a.timestamp).getTime()) < 7 * 24 * 60 * 60 * 1000)
-        .map(a => a.details.split(': ')[1]?.trim()); // Extract recipe name roughly
+      // Filter recipes that are currently on the meal plan for the last 7 days
+      const recentRecipeIds = new Set();
+      const today = new Date();
       
-      // This is a loose match, ideally we'd track recipe IDs in activity log
-      // For now, let's match by title if possible, or skip if too complex without IDs
-      // A better approach with current data:
-      filtered = filtered.filter(r => recentActivity.some(name => name && r.title.includes(name)));
+      // Check last 7 days
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        const dateKey = d.toDateString();
+        
+        if (mealPlan[dateKey]) {
+          mealPlan[dateKey].forEach(id => recentRecipeIds.add(id));
+        }
+      }
+
+      filtered = filtered.filter(r => recentRecipeIds.has(r.id));
     }
     
     // Only sort if a specific sort order is selected (not 'manual')
