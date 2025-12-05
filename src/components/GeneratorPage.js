@@ -21,6 +21,7 @@ const GeneratorPage = ({
     const [urlInput, setUrlInput] = useState('');
     const [showUrlInput, setShowUrlInput] = useState(false);
     const [loadingImage, setLoadingImage] = useState(false);
+    const [customTags, setCustomTags] = useState('');
     const toast = useToast();
     const { addActivity } = useActivityLog();
 
@@ -145,7 +146,8 @@ const GeneratorPage = ({
     const handleSaveWithImage = () => {
         const recipeToSave = {
             ...generated,
-            image: customImage || generated.image
+            image: customImage || generated.image,
+            tags: customTags ? customTags.split(',').map(t => t.trim()).filter(t => t) : (generated.tags || [])
         };
         handleSaveRecipe(recipeToSave);
     };
@@ -438,6 +440,75 @@ const GeneratorPage = ({
                                     <p className="text-xs text-muted-foreground">
                                         Upload a custom image or paste an image URL (max 5MB)
                                     </p>
+                                </div>
+                            </div>
+
+                            {/* Tags Section */}
+                            <div className="border-t border-border pt-6">
+                                <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-3">Tags & Categories</h4>
+                                
+                                {/* Display current tags as badges */}
+                                {customTags && (
+                                    <div className="flex flex-wrap gap-2 mb-3">
+                                        {customTags.split(',').map(t => t.trim()).filter(t => t).map((tag, idx) => (
+                                            <span 
+                                                key={idx}
+                                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20"
+                                            >
+                                                {tag}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const tags = customTags.split(',').map(t => t.trim()).filter(t => t);
+                                                        tags.splice(idx, 1);
+                                                        setCustomTags(tags.join(', '));
+                                                    }}
+                                                    className="hover:text-destructive transition-colors"
+                                                >
+                                                    <X className="w-3 h-3" />
+                                                </button>
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+                                
+                                {/* Input for tags */}
+                                <Input 
+                                    value={customTags} 
+                                    onChange={e => setCustomTags(e.target.value)} 
+                                    placeholder="Type tags separated by commas..." 
+                                    className="bg-muted mb-3 text-sm" 
+                                />
+                                
+                                {/* Suggested tags */}
+                                <div className="space-y-2">
+                                    <p className="text-xs text-muted-foreground">Quick Add:</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Dessert', 'Vegetarian', 'Vegan', 'Gluten-Free', 'Quick & Easy', 'Comfort Food', 'Healthy', 'Indian', 'Italian', 'Mexican', 'Asian'].map(suggestion => {
+                                            const currentTags = customTags.split(',').map(t => t.trim()).filter(t => t);
+                                            const isAdded = currentTags.includes(suggestion);
+                                            return (
+                                                <button
+                                                    key={suggestion}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        if (!isAdded) {
+                                                            const newTags = currentTags.concat(suggestion).join(', ');
+                                                            setCustomTags(newTags);
+                                                        }
+                                                    }}
+                                                    disabled={isAdded}
+                                                    className={`px-2 py-0.5 rounded-full text-xs font-medium border transition-colors ${
+                                                        isAdded 
+                                                            ? 'bg-primary/10 text-primary border-primary/20 cursor-not-allowed opacity-50' 
+                                                            : 'bg-muted text-muted-foreground border-border hover:border-primary hover:text-primary'
+                                                    }`}
+                                                >
+                                                    {isAdded ? '✓ ' : '+ '}{suggestion}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
                             </div>
 
