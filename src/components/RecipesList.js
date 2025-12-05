@@ -36,7 +36,11 @@ const RecipesList = ({
     const [dragOverIndex, setDragOverIndex] = useState(null);
     const [showFilters, setShowFilters] = useState(false);
 
+    const hasActiveFilters = filterMealType || filterCuisine || filterDietary || filterTime || filterIngredients || filterFavorites || filterRecent;
+    const canReorder = !hasActiveFilters && !searchQuery;
+
     const handleDragStart = (e, index) => {
+        if (!canReorder) return;
         setDraggedIndex(index);
         e.dataTransfer.effectAllowed = 'move';
     };
@@ -90,8 +94,6 @@ const RecipesList = ({
         setFilterFavorites(false);
         setFilterRecent(false);
     };
-
-    const hasActiveFilters = filterMealType || filterCuisine || filterDietary || filterTime || filterIngredients || filterFavorites || filterRecent;
 
     return (
         <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
@@ -265,6 +267,13 @@ const RecipesList = ({
                 )}
             </div>
 
+            {/* Note about reordering */}
+            {canReorder && viewMode === 'list' && (
+                <div className="text-xs text-muted-foreground italic text-center -mt-2">
+                    Tip: You can drag and drop recipes to reorder them in this list.
+                </div>
+            )}
+
             {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
                     <Loader className="w-8 h-8 animate-spin mb-4" />
@@ -283,22 +292,25 @@ const RecipesList = ({
                         ) : (
                             <div
                                 key={recipe.id}
-                                draggable
+                                draggable={canReorder}
                                 onDragStart={(e) => handleDragStart(e, index)}
                                 onDragOver={(e) => handleDragOver(e, index)}
                                 onDrop={(e) => handleDrop(e, index)}
                                 onDragEnd={handleDragEnd}
                                 className={`
                                     group flex items-center gap-4 p-4 bg-card rounded-xl border border-border 
-                                    hover:border-input shadow-sm hover:shadow-md transition-all cursor-move
+                                    hover:border-input shadow-sm hover:shadow-md transition-all 
+                                    ${canReorder ? 'cursor-move' : ''}
                                     ${draggedIndex === index ? 'opacity-50' : ''}
                                     ${dragOverIndex === index && draggedIndex !== index ? 'border-primary border-2 scale-[1.02]' : ''}
                                 `}
                             >
                                 {/* Drag Handle */}
-                                <div className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing">
-                                    <GripVertical className="w-5 h-5" />
-                                </div>
+                                {canReorder && (
+                                    <div className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing">
+                                        <GripVertical className="w-5 h-5" />
+                                    </div>
+                                )}
 
                                 <img 
                                     src={recipe.image} 
