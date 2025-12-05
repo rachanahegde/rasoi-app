@@ -25,6 +25,8 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
     const [draggedRecipe, setDraggedRecipe] = useState(null);
     const [draggedGroceryItem, setDraggedGroceryItem] = useState(null);
     const [dragOverIndex, setDragOverIndex] = useState(null);
+    const [draggedMealItem, setDraggedMealItem] = useState(null);
+    const [dragOverMealIndex, setDragOverMealIndex] = useState(null);
     const { addActivity } = useActivityLog();
 
     // Helper to get days for the grid
@@ -261,6 +263,50 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
     const handleGroceryDragEnd = () => {
         setDraggedGroceryItem(null);
         setDragOverIndex(null);
+    };
+
+    // Drag handlers for scheduled meals
+    const handleMealDragStart = (e, index) => {
+        setDraggedMealItem(index);
+        e.dataTransfer.effectAllowed = 'move';
+    };
+
+    const handleMealDragOver = (e, index) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        setDragOverMealIndex(index);
+    };
+
+    const handleMealDrop = (e, dropIndex) => {
+        e.preventDefault();
+        
+        if (draggedMealItem === null || draggedMealItem === dropIndex) {
+            setDraggedMealItem(null);
+            setDragOverMealIndex(null);
+            return;
+        }
+
+        const dateKey = selectedDay.toDateString();
+        const currentMeals = mealPlan[dateKey] || [];
+        const newMeals = [...currentMeals];
+        
+        // Reorder the meals
+        const [removed] = newMeals.splice(draggedMealItem, 1);
+        newMeals.splice(dropIndex, 0, removed);
+
+        // Update meal plan
+        setMealPlan({
+            ...mealPlan,
+            [dateKey]: newMeals
+        });
+
+        setDraggedMealItem(null);
+        setDragOverMealIndex(null);
+    };
+
+    const handleMealDragEnd = () => {
+        setDraggedMealItem(null);
+        setDragOverMealIndex(null);
     };
 
     return (
@@ -542,8 +588,25 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                                 const recipe = recipes.find(r => r.id === rId);
                                                 if (!recipe) return null;
                                                 return (
-                                                    <div key={idx} className="bg-card border border-border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow group">
+                                                    <div 
+                                                        key={idx}
+                                                        draggable
+                                                        onDragStart={(e) => handleMealDragStart(e, idx)}
+                                                        onDragOver={(e) => handleMealDragOver(e, idx)}
+                                                        onDrop={(e) => handleMealDrop(e, idx)}
+                                                        onDragEnd={handleMealDragEnd}
+                                                        className={`
+                                                            bg-card border border-border rounded-lg p-3 shadow-sm hover:shadow-md transition-all group cursor-move
+                                                            ${draggedMealItem === idx ? 'opacity-50' : ''}
+                                                            ${dragOverMealIndex === idx && draggedMealItem !== idx ? 'border-primary border-2 scale-[1.02]' : ''}
+                                                        `}
+                                                    >
                                                         <div className="flex gap-3">
+                                                            {/* Drag Handle */}
+                                                            <div className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing mt-1">
+                                                                <MoreHorizontal className="w-4 h-4 rotate-90" />
+                                                            </div>
+                                                            
                                                             <div className="w-16 h-16 rounded-md bg-muted overflow-hidden shrink-0">
                                                                 {/* Placeholder for image */}
                                                                 <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-muted">
@@ -561,7 +624,7 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                                             </div>
                                                             <div className="flex flex-col justify-between items-end">
                                                                 <button
-                                                                    onClick={() => removeRecipeFromDate(selectedDay, idx)}
+                                                                    onClick={(e) => { e.stopPropagation(); removeRecipeFromDate(selectedDay, idx); }}
                                                                     className="text-muted-foreground hover:text-destructive transition-colors"
                                                                 >
                                                                     <Trash2 className="w-4 h-4" />
