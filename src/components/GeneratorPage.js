@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { saveApiKey, hasApiKey, removeApiKey, generateRecipeAction } from '@/app/actions';
 import { useToast } from '@/context/ToastContext';
+import { useActivityLog } from '@/context/ActivityLogContext';
 
 const GeneratorPage = ({
     aiPrompt,
@@ -18,6 +19,7 @@ const GeneratorPage = ({
     const [generated, setGenerated] = useState(null);
     const [customImage, setCustomImage] = useState(null);
     const toast = useToast();
+    const { addActivity } = useActivityLog();
 
     // Key management state
     const [keyInput, setKeyInput] = useState('');
@@ -66,6 +68,7 @@ const GeneratorPage = ({
             const result = await generateRecipeAction(prompt, ingredients);
             setGenerated(result);
             toast.success('✓ AI variation ready! Review and save below.');
+            addActivity('variation_generated', `Generated AI variation: ${result.title}`);
         } catch (error) {
             console.error("Generation failed:", error);
             toast.error('✗ Failed to generate recipe. Please try again.');

@@ -23,10 +23,12 @@ import RecipeForm from '@/components/RecipeForm';
 import GeneratorPage from '@/components/GeneratorPage';
 import SettingsView from '@/components/SettingsView';
 import CalendarPage from '@/components/CalendarPage';
+import ActivityLog from '@/components/ActivityLog';
 
 import { generateId } from '@/lib/helpers';
 import { useRecipes } from '@/context/RecipeContext';
 import { ToastProvider, useToast } from '@/context/ToastContext';
+import { ActivityLogProvider, useActivityLog } from '@/context/ActivityLogContext';
 import ToastContainer from '@/components/ToastContainer';
 
 function AppContent() {
@@ -47,6 +49,7 @@ function AppContent() {
   } = useRecipes();
 
   const toast = useToast();
+  const { activities, addActivity } = useActivityLog();
 
   const [view, setView] = useState('dashboard');
   const [activeRecipeId, setActiveRecipeId] = useState(null);
@@ -88,17 +91,23 @@ function AppContent() {
     if (recipe.id) {
       updateRecipe(recipe);
       toast.success('✓ Recipe updated successfully!');
+      addActivity('recipe_updated', `Updated: ${recipe.title}`);
     } else {
       addRecipe(recipe);
       toast.success('✓ Recipe saved to your notebook!');
+      addActivity('recipe_added', `Added a new recipe: ${recipe.title}`, null, recipe.tags);
     }
     setView('recipes');
   };
 
   const handleDeleteRecipe = (id) => {
     if (confirm('Tear this page out of your notebook?')) {
+      const recipe = recipes.find(r => r.id === id);
       deleteRecipe(id);
       toast.success('Recipe removed from notebook');
+      if (recipe) {
+        addActivity('recipe_deleted', `Removed: ${recipe.title}`);
+      }
       setView('recipes');
     }
   };
@@ -181,7 +190,10 @@ function AppContent() {
           </nav>
 
           <div className="flex flex-col gap-6 mt-auto">
-            {/* <Bell className="w-6 h-6 text-muted-foreground cursor-pointer hover:text-foreground transition-colors" /> */}
+            <Bell 
+              className={`w-6 h-6 cursor-pointer hover:text-foreground transition-colors ${view === 'activity' ? 'text-foreground' : 'text-muted-foreground'}`}
+              onClick={() => navigateTo('activity')}
+            />
             <Settings
               className={`w-6 h-6 cursor-pointer hover:text-foreground transition-colors ${view === 'settings' ? 'text-foreground' : 'text-muted-foreground'}`}
               onClick={() => navigateTo('settings')}
@@ -289,6 +301,9 @@ function AppContent() {
               navigateTo={navigateTo}
             />
           )}
+          {view === 'activity' && (
+            <ActivityLog activities={activities} />
+          )}
           {view === 'profile' && (
             <div className="max-w-4xl mx-auto">
               <h1 className="text-4xl font-serif font-bold text-foreground mb-4">Profile</h1>
@@ -303,7 +318,9 @@ function AppContent() {
 export default function App() {
   return (
     <ToastProvider>
-      <AppContent />
+      <ActivityLogProvider>
+        <AppContent />
+      </ActivityLogProvider>
     </ToastProvider>
   );
 }
