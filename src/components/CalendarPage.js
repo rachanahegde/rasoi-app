@@ -543,7 +543,16 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                                     {item.checked && <Check className="w-3.5 h-3.5" />}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <p className={`text-sm font-medium capitalize transition-colors ${item.checked ? 'text-muted-foreground line-through' : 'text-foreground'}`}>{item.name}</p>
+                                                    <div className="flex items-center gap-2">
+                                                        <p className={`text-sm font-medium capitalize transition-colors ${item.checked ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+                                                            {item.name}
+                                                        </p>
+                                                        {item.count > 1 && (
+                                                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">
+                                                                ×{item.count}
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     <div className="flex flex-wrap gap-1 mt-1">
                                                         {item.recipes.map(r => (
                                                             <span key={r.id} className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground truncate max-w-full">
