@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, LayoutGrid, List, Plus, Heart, Clock, Flame, GripVertical, Filter, X, ChefHat, Utensils, Leaf, Timer, ShoppingBasket, Loader } from 'lucide-react';
+import { Search, LayoutGrid, List, Plus, Heart, Clock, Flame, GripVertical, Filter, X, ChefHat, Utensils, Leaf, Timer, ShoppingBasket, Loader, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -127,6 +127,16 @@ const RecipesList = ({
                                 <List className="w-4 h-4" />
                             </button>
                         </div>
+                        
+                        {canReorder && viewMode === 'list' && (
+                            <div className="group relative flex items-center justify-center h-10 w-10">
+                                <Info className="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors cursor-help" />
+                                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-54 p-2 bg-popover text-popover-foreground text-xs rounded-md border border-border shadow-md invisible group-hover:visible z-50 text-center">
+                                    Drag and drop recipes to reorder
+                                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-popover"></div>
+                                </div>
+                            </div>
+                        )}
 
                         <Button 
                             variant="outline" 
@@ -267,12 +277,7 @@ const RecipesList = ({
                 )}
             </div>
 
-            {/* Note about reordering */}
-            {canReorder && viewMode === 'list' && (
-                <div className="text-xs text-muted-foreground italic text-center -mt-2">
-                    Tip: You can drag and drop recipes to reorder them in this list.
-                </div>
-            )}
+            {/* Note about reordering - Removed in favor of tooltip icon */}
 
             {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
