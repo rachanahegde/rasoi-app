@@ -3,6 +3,8 @@ import { ArrowLeft, X, Plus, Upload, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/context/ToastContext';
+import { allTags, suggestTags } from '@/lib/tagSuggestions';
+import { useEffect } from 'react';
 
 const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
     const [formData, setFormData] = useState({
@@ -21,6 +23,8 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
     const [urlInput, setUrlInput] = useState('');
     const [showUrlInput, setShowUrlInput] = useState(false);
     const [loadingImage, setLoadingImage] = useState(false);
+    const [suggestedTags, setSuggestedTags] = useState([]);
+    const [loadingSuggestions, setLoadingSuggestions] = useState(false);
     const toast = useToast();
     const handleChange = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
     const handleArrayChange = (field, index, value) => {
@@ -92,6 +96,36 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
         setFormData(prev => ({ ...prev, image: '' }));
         setShowUrlInput(false);
     };
+
+    // Generate tag suggestions when recipe content changes
+    useEffect(() => {
+        const generateSuggestions = async () => {
+            if (formData.title || formData.description || formData.ingredients.some(i => i) || formData.steps.some(s => s)) {
+                setLoadingSuggestions(true);
+                try {
+                    const suggestions = await suggestTags({
+                        title: formData.title,
+                        description: formData.description,
+                        ingredients: formData.ingredients,
+                        steps: formData.steps
+                    });
+                    
+                    // Filter out already added tags
+                    const currentTags = formData.tags.split(',').map(t => t.trim()).filter(t => t);
+                    const newSuggestions = suggestions.filter(s => !currentTags.includes(s));
+                    setSuggestedTags(newSuggestions);
+                } catch (error) {
+                    console.error('Error generating tag suggestions:', error);
+                } finally {
+                    setLoadingSuggestions(false);
+                }
+            }
+        };
+
+        // Debounce the suggestion generation
+        const timeoutId = setTimeout(generateSuggestions, 1000);
+        return () => clearTimeout(timeoutId);
+    }, [formData.title, formData.description, formData.ingredients, formData.steps, formData.tags]);
     const handleSubmit = (e) => {
         e.preventDefault();
         const recipeToSave = {
@@ -343,6 +377,34 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
                                 className="bg-muted" 
                             />
                         </div>
+                        
+                        {/* Smart Suggested Tags */}
+                        {suggestedTags.length > 0 && (
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                    <p className="text-xs font-semibold text-primary">✨ Smart Suggestions:</p>
+                                    {loadingSuggestions && (
+                                        <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                                    )}
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {suggestedTags.slice(0, 8).map(suggestion => (
+                                        <button
+                                            key={suggestion}
+                                            type="button"
+                                            onClick={() => {
+                                                const currentTags = formData.tags.split(',').map(t => t.trim()).filter(t => t);
+                                                const newTags = currentTags.concat(suggestion).join(', ');
+                                                handleChange('tags', newTags);
+                                            }}
+                                            className="px-2.5 py-1 rounded-full text-xs font-medium border bg-primary/5 text-primary border-primary/30 hover:bg-primary/10 hover:border-primary transition-colors"
+                                        >
+                                            + {suggestion}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                         
                         {/* Suggested tags */}
                         <div className="space-y-2">

@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { saveApiKey, hasApiKey, removeApiKey, generateRecipeAction } from '@/app/actions';
 import { useToast } from '@/context/ToastContext';
 import { useActivityLog } from '@/context/ActivityLogContext';
+import { suggestTags } from '@/lib/tagSuggestions';
 
 const GeneratorPage = ({
     aiPrompt,
@@ -22,6 +23,8 @@ const GeneratorPage = ({
     const [showUrlInput, setShowUrlInput] = useState(false);
     const [loadingImage, setLoadingImage] = useState(false);
     const [customTags, setCustomTags] = useState('');
+    const [suggestedTags, setSuggestedTags] = useState([]);
+    const [loadingSuggestions, setLoadingSuggestions] = useState(false);
     const toast = useToast();
     const { addActivity } = useActivityLog();
 
@@ -73,6 +76,24 @@ const GeneratorPage = ({
             setGenerated(result);
             toast.success('✓ AI variation ready! Review and save below.');
             addActivity('variation_generated', `Generated AI variation: ${result.title}`);
+            
+            // Generate tag suggestions for the AI-generated recipe
+            setLoadingSuggestions(true);
+            try {
+                const suggestions = await suggestTags({
+                    title: result.title,
+                    description: result.description || '',
+                    ingredients: result.ingredients || [],
+                    steps: result.steps || []
+                });
+                setSuggestedTags(suggestions);
+                // Auto-populate with suggestions
+                setCustomTags(suggestions.slice(0, 5).join(', '));
+            } catch (error) {
+                console.error('Error generating tag suggestions:', error);
+            } finally {
+                setLoadingSuggestions(false);
+            }
         } catch (error) {
             console.error("Generation failed:", error);
             toast.error('✗ Failed to generate recipe. Please try again.');
@@ -479,6 +500,34 @@ const GeneratorPage = ({
                                     placeholder="Type tags separated by commas..." 
                                     className="bg-muted mb-3 text-sm" 
                                 />
+                                
+                                {/* Smart Suggested Tags */}
+                                {suggestedTags.length > 0 && (
+                                    <div className="space-y-2 mb-3">
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-xs font-semibold text-primary">✨ Smart Suggestions:</p>
+                                            {loadingSuggestions && (
+                                                <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                                            )}
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {suggestedTags.slice(0, 8).map(suggestion => (
+                                                <button
+                                                    key={suggestion}
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const currentTags = customTags.split(',').map(t => t.trim()).filter(t => t);
+                                                        const newTags = currentTags.concat(suggestion).join(', ');
+                                                        setCustomTags(newTags);
+                                                    }}
+                                                    className="px-2.5 py-1 rounded-full text-xs font-medium border bg-primary/5 text-primary border-primary/30 hover:bg-primary/10 hover:border-primary transition-colors"
+                                                >
+                                                    + {suggestion}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                                 
                                 {/* Suggested tags */}
                                 <div className="space-y-2">
