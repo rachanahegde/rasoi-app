@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PenTool, Loader2, ChefHat, Sparkles, Upload, Eye, EyeOff } from 'lucide-react';
+import { PenTool, Loader2, ChefHat, Sparkles, Upload, Eye, EyeOff, Image as ImageIcon, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { saveApiKey, hasApiKey, removeApiKey, generateRecipeAction } from '@/app/actions';
@@ -18,6 +18,9 @@ const GeneratorPage = ({
     const [ingredients, setIngredients] = useState(aiIngredients || '');
     const [generated, setGenerated] = useState(null);
     const [customImage, setCustomImage] = useState(null);
+    const [urlInput, setUrlInput] = useState('');
+    const [showUrlInput, setShowUrlInput] = useState(false);
+    const [loadingImage, setLoadingImage] = useState(false);
     const toast = useToast();
     const { addActivity } = useActivityLog();
 
@@ -81,21 +84,61 @@ const GeneratorPage = ({
         if (file) {
             // Check file size (limit to 5MB)
             if (file.size > 5 * 1024 * 1024) {
-                alert("Image size should be less than 5MB");
+                toast.error('✗ Image size should be less than 5MB');
                 return;
             }
 
             // Check file type
             if (!file.type.startsWith('image/')) {
-                alert("Please upload an image file");
+                toast.error('✗ Please upload an image file');
                 return;
             }
 
             const reader = new FileReader();
             reader.onloadend = () => {
                 setCustomImage(reader.result);
+                toast.success('✓ Image uploaded successfully!');
             };
             reader.readAsDataURL(file);
+        }
+    };
+
+    const loadImageFromUrl = async () => {
+        if (!urlInput.trim()) {
+            toast.error('✗ Please enter a valid image URL');
+            return;
+        }
+
+        setLoadingImage(true);
+        try {
+            const response = await fetch(urlInput);
+            if (!response.ok) throw new Error('Failed to fetch image');
+            
+            const blob = await response.blob();
+            
+            // Check file size
+            if (blob.size > 5 * 1024 * 1024) {
+                toast.error('✗ Image size should be less than 5MB');
+                setLoadingImage(false);
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setCustomImage(reader.result);
+                setShowUrlInput(false);
+                setUrlInput('');
+                toast.success('✓ Image loaded successfully!');
+            };
+            reader.onerror = () => {
+                toast.error('✗ Failed to process image');
+            };
+            reader.readAsDataURL(blob);
+        } catch (error) {
+            console.error('Error loading image:', error);
+            toast.error('✗ Failed to load image. Please check the URL or try uploading instead.');
+        } finally {
+            setLoadingImage(false);
         }
     };
 
@@ -285,36 +328,115 @@ const GeneratorPage = ({
                                     </div>
 
                                     {/* Upload Button */}
-                                    <div className="flex gap-2">
-                                        <label className="flex-1">
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleImageUpload}
-                                                className="hidden"
-                                            />
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                className="w-full cursor-pointer"
-                                                onClick={(e) => e.currentTarget.previousElementSibling.click()}
-                                            >
-                                                <Upload className="w-4 h-4 mr-2" />
-                                                {customImage ? 'Change Image' : 'Upload Image'}
-                                            </Button>
-                                        </label>
-                                        {customImage && (
-                                            <Button
-                                                variant="ghost"
-                                                onClick={() => setCustomImage(null)}
-                                                className="text-muted-foreground hover:text-destructive"
-                                            >
-                                                Remove
-                                            </Button>
+                                    <div className="space-y-3">
+                                        <div className="flex gap-2">
+                                            <label className="flex-1">
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleImageUpload}
+                                                    className="hidden"
+                                                />
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    className="w-full cursor-pointer"
+                                                    onClick={(e) => e.currentTarget.previousElementSibling.click()}
+                                                >
+                                                    <Upload className="w-4 h-4 mr-2" />
+                                                    {customImage ? 'Change Image' : 'Upload Image'}
+                                                </Button>
+                                            </label>
+                                            {customImage && (
+                                                <Button
+                                                    variant="ghost"
+                                                    onClick={() => {
+                                                        setCustomImage(null);
+                                                        setShowUrlInput(false);
+                                                        setUrlInput('');
+                                                    }}
+                                                    className="text-muted-foreground hover:text-destructive"
+                                                >
+                                                    Remove
+                                                </Button>
+                                            )}
+                                        </div>
+
+                                        {!customImage && (
+                                            <>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex-1 h-px bg-border"></div>
+                                                    <span className="text-xs text-muted-foreground uppercase tracking-wider">or</span>
+                                                    <div className="flex-1 h-px bg-border"></div>
+                                                </div>
+
+                                                {showUrlInput ? (
+                                                    <div className="space-y-2">
+                                                        <div className="flex gap-2">
+                                                            <Input
+                                                                type="url"
+                                                                placeholder="Paste image URL..."
+                                                                value={urlInput}
+                                                                onChange={(e) => setUrlInput(e.target.value)}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') {
+                                                                        e.preventDefault();
+                                                                        loadImageFromUrl();
+                                                                    }
+                                                                }}
+                                                                className="bg-muted text-sm"
+                                                                disabled={loadingImage}
+                                                            />
+                                                            <Button
+                                                                type="button"
+                                                                variant="ghost"
+                                                                onClick={() => {
+                                                                    setShowUrlInput(false);
+                                                                    setUrlInput('');
+                                                                }}
+                                                                disabled={loadingImage}
+                                                            >
+                                                                <X className="w-4 h-4" />
+                                                            </Button>
+                                                        </div>
+                                                        <Button
+                                                            type="button"
+                                                            variant="default"
+                                                            onClick={loadImageFromUrl}
+                                                            disabled={loadingImage || !urlInput.trim()}
+                                                            className="w-full"
+                                                            size="sm"
+                                                        >
+                                                            {loadingImage ? (
+                                                                <>
+                                                                    <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin mr-2" />
+                                                                    Loading...
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <ImageIcon className="w-4 h-4 mr-2" />
+                                                                    Load Image
+                                                                </>
+                                                            )}
+                                                        </Button>
+                                                    </div>
+                                                ) : (
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        onClick={() => setShowUrlInput(true)}
+                                                        className="w-full"
+                                                        size="sm"
+                                                    >
+                                                        <ImageIcon className="w-4 h-4 mr-2" />
+                                                        Use Image URL
+                                                    </Button>
+                                                )}
+                                            </>
                                         )}
                                     </div>
                                     <p className="text-xs text-muted-foreground">
-                                        Upload a custom image for this recipe (max 5MB)
+                                        Upload a custom image or paste an image URL (max 5MB)
                                     </p>
                                 </div>
                             </div>

@@ -18,7 +18,9 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
         tags: initialData.tags ? initialData.tags.join(', ') : ''
     });
     const [imageUrl, setImageUrl] = useState(initialData.image || '');
+    const [urlInput, setUrlInput] = useState('');
     const [showUrlInput, setShowUrlInput] = useState(false);
+    const [loadingImage, setLoadingImage] = useState(false);
     const toast = useToast();
     const handleChange = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
     const handleArrayChange = (field, index, value) => {
@@ -42,18 +44,51 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
                 const base64String = reader.result;
                 setImageUrl(base64String);
                 setFormData(prev => ({ ...prev, image: base64String }));
+                toast.success('✓ Image uploaded successfully!');
             };
             reader.readAsDataURL(file);
         }
     };
 
-    const handleImageUrlChange = (url) => {
-        setImageUrl(url);
-        setFormData(prev => ({ ...prev, image: url }));
+    const loadImageFromUrl = async () => {
+        if (!urlInput.trim()) {
+            toast.error('✗ Please enter a valid image URL');
+            return;
+        }
+
+        setLoadingImage(true);
+        try {
+            // Fetch the image
+            const response = await fetch(urlInput);
+            if (!response.ok) throw new Error('Failed to fetch image');
+            
+            const blob = await response.blob();
+            
+            // Convert to base64
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64String = reader.result;
+                setImageUrl(base64String);
+                setFormData(prev => ({ ...prev, image: base64String }));
+                setShowUrlInput(false);
+                setUrlInput('');
+                toast.success('✓ Image loaded successfully!');
+            };
+            reader.onerror = () => {
+                toast.error('✗ Failed to process image');
+            };
+            reader.readAsDataURL(blob);
+        } catch (error) {
+            console.error('Error loading image:', error);
+            toast.error('✗ Failed to load image. Please check the URL or try uploading instead.');
+        } finally {
+            setLoadingImage(false);
+        }
     };
 
     const removeImage = () => {
         setImageUrl('');
+        setUrlInput('');
         setFormData(prev => ({ ...prev, image: '' }));
         setShowUrlInput(false);
     };
@@ -180,20 +215,52 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
                                 </div>
 
                                 {showUrlInput ? (
-                                    <div className="flex gap-2">
-                                        <Input
-                                            type="url"
-                                            placeholder="Paste image URL..."
-                                            value={imageUrl}
-                                            onChange={(e) => handleImageUrlChange(e.target.value)}
-                                            className="bg-muted"
-                                        />
+                                    <div className="space-y-2">
+                                        <div className="flex gap-2">
+                                            <Input
+                                                type="url"
+                                                placeholder="Paste image URL..."
+                                                value={urlInput}
+                                                onChange={(e) => setUrlInput(e.target.value)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        e.preventDefault();
+                                                        loadImageFromUrl();
+                                                    }
+                                                }}
+                                                className="bg-muted"
+                                                disabled={loadingImage}
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                onClick={() => {
+                                                    setShowUrlInput(false);
+                                                    setUrlInput('');
+                                                }}
+                                                disabled={loadingImage}
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </Button>
+                                        </div>
                                         <Button
                                             type="button"
-                                            variant="ghost"
-                                            onClick={() => setShowUrlInput(false)}
+                                            variant="default"
+                                            onClick={loadImageFromUrl}
+                                            disabled={loadingImage || !urlInput.trim()}
+                                            className="w-full"
                                         >
-                                            <X className="w-4 h-4" />
+                                            {loadingImage ? (
+                                                <>
+                                                    <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin mr-2" />
+                                                    Loading Image...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <ImageIcon className="w-4 h-4 mr-2" />
+                                                    Load Image from URL
+                                                </>
+                                            )}
                                         </Button>
                                     </div>
                                 ) : (
