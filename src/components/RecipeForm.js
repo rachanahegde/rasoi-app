@@ -17,6 +17,8 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
         steps: [''],
         image: '',
         ...initialData,
+        ingredients: initialData.ingredients || [''],
+        steps: initialData.steps || [''],
         tags: initialData.tags ? initialData.tags.join(', ') : ''
     });
     const [imageUrl, setImageUrl] = useState(initialData.image || '');

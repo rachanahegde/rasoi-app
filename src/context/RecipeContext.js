@@ -19,7 +19,8 @@ export function RecipeProvider({ children }) {
 
         if (storedRecipes) {
             try {
-                setRecipes(JSON.parse(storedRecipes));
+                const parsed = JSON.parse(storedRecipes);
+                setRecipes(Array.isArray(parsed) ? parsed : []);
             } catch (e) {
                 console.error("Failed to parse recipes", e);
                 setRecipes([]);

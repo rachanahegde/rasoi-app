@@ -30,7 +30,7 @@ const RecipeCard = ({ recipe, onClick, onToggleFav }) => (
                 <h3 className="font-serif font-bold text-lg leading-snug text-card-foreground line-clamp-2">{recipe.title}</h3>
             </div>
             <div className="flex flex-wrap gap-2">
-                {recipe.tags.slice(0, 2).map(tag => (
+                {recipe.tags && recipe.tags.slice(0, 2).map(tag => (
                     <span key={tag} className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-muted px-2 py-1 rounded-sm border border-border/50">{tag}</span>
                 ))}
             </div>

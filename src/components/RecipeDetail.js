@@ -95,7 +95,7 @@ const RecipeDetail = ({
                         </div>
                         <p className="text-muted-foreground font-serif italic leading-relaxed mb-4 text-lg">"{recipe.description}"</p>
                         <div className="flex gap-2 flex-wrap">
-                            {recipe.tags.map(tag => (
+                            {recipe.tags && recipe.tags.map(tag => (
                                 <Badge key={tag} className="bg-accent text-accent-foreground border border-accent transform rotate-1">{tag}</Badge>
                             ))}
                         </div>
@@ -114,7 +114,7 @@ const RecipeDetail = ({
                             <Utensils className="w-5 h-5 text-muted-foreground" /> Shopping List
                         </h3>
                         <ul className="space-y-3">
-                            {recipe.ingredients.map((ing, i) => (
+                            {recipe.ingredients && recipe.ingredients.map((ing, i) => (
                                 <li key={i} className="flex items-center gap-3 text-foreground group font-serif text-lg">
                                     <div className="w-5 h-5 border-2 border-border rounded-sm group-hover:border-foreground flex items-center justify-center transition-colors cursor-pointer bg-card">
                                         <Check className="w-4 h-4 text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -130,7 +130,7 @@ const RecipeDetail = ({
                             <BookOpen className="w-5 h-5 text-muted-foreground" /> Method
                         </h3>
                         <div className="space-y-6 relative border-l-2 border-border ml-3 pl-6">
-                            {recipe.steps.map((step, i) => (
+                            {recipe.steps && recipe.steps.map((step, i) => (
                                 <div key={i} className="relative">
                                     <div className="absolute -left-[33px] top-0 w-6 h-6 rounded-full bg-muted text-muted-foreground border border-border flex items-center justify-center font-serif font-bold text-sm shadow-sm">
                                         {i + 1}

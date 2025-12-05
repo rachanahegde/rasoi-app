@@ -64,6 +64,15 @@ function AppContent() {
   // groceryState moved to context
   const [darkMode, setDarkMode] = useState(false);
 
+  // Filter States
+  const [filterMealType, setFilterMealType] = useState('');
+  const [filterCuisine, setFilterCuisine] = useState('');
+  const [filterDietary, setFilterDietary] = useState('');
+  const [filterTime, setFilterTime] = useState('');
+  const [filterIngredients, setFilterIngredients] = useState('');
+  const [filterFavorites, setFilterFavorites] = useState(false);
+  const [filterRecent, setFilterRecent] = useState(false);
+
   // Load viewMode preference from localStorage on mount
   useEffect(() => {
     const storedViewMode = localStorage.getItem('chefs_notebook_view_mode');
@@ -197,7 +206,9 @@ function AppContent() {
   };
 
   const getFilteredRecipes = () => {
-    let filtered = recipes;
+    // Ensure recipes is an array before filtering
+    let filtered = Array.isArray(recipes) ? recipes : [];
+    
     if (searchQuery.trim()) {
       const normalizedQuery = searchQuery.trim().toLowerCase();
       const tokens = normalizedQuery.split(/\s+/).filter(t => t.length > 0);
@@ -205,12 +216,56 @@ function AppContent() {
         const searchable = [
           r.title,
           r.description || '',
-          r.ingredients.join(" "),
-          r.steps.join(" "),
-          r.tags.join(" ")
+          (r.ingredients || []).join(" "),
+          (r.steps || []).join(" "),
+          (r.tags || []).join(" ")
         ].join(" ").toLowerCase();
         return tokens.every(token => searchable.includes(token));
       });
+    }
+
+    // Apply Filters
+    // Apply Filters
+    if (filterMealType && filterMealType !== 'all') {
+      filtered = filtered.filter(r => r.tags && r.tags.some(t => t.toLowerCase() === filterMealType.toLowerCase()));
+    }
+    if (filterCuisine && filterCuisine !== 'all') {
+      filtered = filtered.filter(r => r.tags && r.tags.some(t => t.toLowerCase() === filterCuisine.toLowerCase()));
+    }
+    if (filterDietary && filterDietary !== 'all') {
+      filtered = filtered.filter(r => r.tags && r.tags.some(t => t.toLowerCase() === filterDietary.toLowerCase()));
+    }
+    if (filterTime && filterTime !== 'all') {
+      filtered = filtered.filter(r => {
+        const timeStr = r.time || '';
+        const minutes = parseInt(timeStr.replace(/\D/g, '')) || 0;
+        if (filterTime === '15') return minutes > 0 && minutes <= 15;
+        if (filterTime === '30') return minutes > 0 && minutes <= 30;
+        if (filterTime === '60') return minutes > 0 && minutes <= 60;
+        return true;
+      });
+    }
+    if (filterIngredients && filterIngredients !== 'all') {
+      filtered = filtered.filter(r => {
+        const count = r.ingredients ? r.ingredients.length : 0;
+        if (filterIngredients === '5') return count <= 5;
+        if (filterIngredients === '10') return count <= 10;
+        return true;
+      });
+    }
+    if (filterFavorites) {
+      filtered = filtered.filter(r => r.isFavorite);
+    }
+    if (filterRecent) {
+      // Filter recipes that have been added to meal plan in the last 7 days
+      const recentActivity = activities
+        .filter(a => a.type === 'added_to_meal_plan' && (Date.now() - new Date(a.timestamp).getTime()) < 7 * 24 * 60 * 60 * 1000)
+        .map(a => a.details.split(': ')[1]?.trim()); // Extract recipe name roughly
+      
+      // This is a loose match, ideally we'd track recipe IDs in activity log
+      // For now, let's match by title if possible, or skip if too complex without IDs
+      // A better approach with current data:
+      filtered = filtered.filter(r => recentActivity.some(name => name && r.title.includes(name)));
     }
     
     // Only sort if a specific sort order is selected (not 'manual')
@@ -294,18 +349,36 @@ function AppContent() {
             />
           )}
           {view === 'recipes' && (
-            <RecipesList
-              filteredRecipes={filteredRecipes}
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              viewMode={viewMode}
-              setViewMode={setViewMode}
-              navigateTo={navigateTo}
-              toggleFavorite={toggleFavorite}
-              reorderRecipes={reorderRecipes}
-              allRecipes={recipes}
-            />
-          )}
+          <RecipesList 
+            recipes={filteredRecipes} 
+            allRecipes={recipes}
+            onRecipeClick={(id) => navigateTo('detail', id)}
+            onAddRecipe={() => navigateTo('generate')}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            onReorder={reorderRecipes}
+            
+            // Pass filter props
+            filterMealType={filterMealType}
+            setFilterMealType={setFilterMealType}
+            filterCuisine={filterCuisine}
+            setFilterCuisine={setFilterCuisine}
+            filterDietary={filterDietary}
+            setFilterDietary={setFilterDietary}
+            filterTime={filterTime}
+            setFilterTime={setFilterTime}
+            filterIngredients={filterIngredients}
+            setFilterIngredients={setFilterIngredients}
+            filterFavorites={filterFavorites}
+            setFilterFavorites={setFilterFavorites}
+            filterRecent={filterRecent}
+            setFilterRecent={setFilterRecent}
+          />
+        )}
           {view === 'detail' && (
             <RecipeDetail
               activeRecipeId={activeRecipeId}
