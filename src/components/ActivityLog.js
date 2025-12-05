@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
     BookOpen, 
     Pencil, 
@@ -7,10 +7,23 @@ import {
     ShoppingBasket,
     Clock,
     Plus,
-    Trash2
+    Trash2,
+    Heart,
+    Calendar as CalendarIcon
 } from 'lucide-react';
 
 const ActivityLog = ({ activities = [] }) => {
+    const [currentTime, setCurrentTime] = useState(new Date());
+
+    // Update current time every minute to refresh relative timestamps
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 60000); // Update every minute
+
+        return () => clearInterval(interval);
+    }, []);
+
     const getActivityIcon = (type) => {
         switch (type) {
             case 'recipe_added':
@@ -25,6 +38,12 @@ const ActivityLog = ({ activities = [] }) => {
                 return <Tag className="w-4 h-4" />;
             case 'shopping_list_created':
                 return <ShoppingBasket className="w-4 h-4" />;
+            case 'recipe_favorited':
+            case 'recipe_unfavorited':
+                return <Heart className="w-4 h-4" />;
+            case 'meal_planned':
+            case 'meal_removed':
+                return <CalendarIcon className="w-4 h-4" />;
             default:
                 return <BookOpen className="w-4 h-4" />;
         }
@@ -32,18 +51,31 @@ const ActivityLog = ({ activities = [] }) => {
 
     const formatTimestamp = (timestamp) => {
         const date = new Date(timestamp);
-        const now = new Date();
-        const diffMs = now - date;
+        const diffMs = currentTime - date;
         const diffMins = Math.floor(diffMs / 60000);
         const diffHours = Math.floor(diffMs / 3600000);
         const diffDays = Math.floor(diffMs / 86400000);
 
-        if (diffMins < 1) return 'Just now';
-        if (diffMins < 60) return `${diffMins}m ago`;
-        if (diffHours < 24) return `${diffHours}h ago`;
-        if (diffDays < 7) return `${diffDays}d ago`;
+        // For activities less than a week old, show relative time
+        if (diffDays < 7) {
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            return `${diffDays}d ago`;
+        }
         
-        return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        // For older activities, show full date/time with timezone
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const timeZoneAbbr = new Date().toLocaleTimeString('en-US', { timeZoneName: 'short' }).split(' ')[2];
+        
+        return date.toLocaleString(undefined, { 
+            month: 'short', 
+            day: 'numeric',
+            year: date.getFullYear() !== currentTime.getFullYear() ? 'numeric' : undefined,
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        }) + ` ${timeZoneAbbr}`;
     };
 
     return (

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useActivityLog } from '@/context/ActivityLogContext';
 
 const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGroceryState, navigateTo }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -24,6 +25,7 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
     const [draggedRecipe, setDraggedRecipe] = useState(null);
     const [draggedGroceryItem, setDraggedGroceryItem] = useState(null);
     const [dragOverIndex, setDragOverIndex] = useState(null);
+    const { addActivity } = useActivityLog();
 
     // Helper to get days for the grid
     const calendarDays = useMemo(() => {
@@ -105,13 +107,34 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
             ...mealPlan,
             [dateKey]: [...currentPlan, recipeId]
         });
+        
+        // Log activity
+        const recipe = recipes.find(r => r.id === recipeId);
+        if (recipe) {
+            const dateStr = date.toLocaleDateString(undefined, { 
+                month: 'short', 
+                day: 'numeric' 
+            });
+            addActivity('meal_planned', `Planned "${recipe.title}" for ${dateStr}`);
+        }
     };
 
     const removeRecipeFromDate = (date, indexToRemove) => {
         const dateKey = date.toDateString();
         const currentPlan = mealPlan[dateKey] || [];
+        const recipeId = currentPlan[indexToRemove];
         const newPlan = [...currentPlan];
         newPlan.splice(indexToRemove, 1);
+
+        // Log activity before removing
+        const recipe = recipes.find(r => r.id === recipeId);
+        if (recipe) {
+            const dateStr = date.toLocaleDateString(undefined, { 
+                month: 'short', 
+                day: 'numeric' 
+            });
+            addActivity('meal_removed', `Removed "${recipe.title}" from ${dateStr}`);
+        }
 
         if (newPlan.length === 0) {
             const { [dateKey]: deleted, ...rest } = mealPlan;

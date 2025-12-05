@@ -114,16 +114,45 @@ function AppContent() {
 
   const toggleFavorite = (e, id) => {
     e.stopPropagation();
+    const recipe = recipes.find(r => r.id === id);
+    const isFavorited = recipe?.favorite;
     toggleFavoriteContext(id);
+    
+    if (recipe) {
+      if (isFavorited) {
+        addActivity('recipe_unfavorited', `Unfavorited: ${recipe.title}`);
+      } else {
+        addActivity('recipe_favorited', `Favorited: ${recipe.title}`);
+      }
+    }
   };
 
   const addToMealPlan = (recipeId, date = null) => {
     const targetDate = date || selectedDate;
+    const recipe = recipes.find(r => r.id === recipeId);
     addToMealPlanContext(recipeId, targetDate);
+    
+    if (recipe) {
+      const dateStr = new Date(targetDate).toLocaleDateString(undefined, { 
+        month: 'short', 
+        day: 'numeric' 
+      });
+      addActivity('meal_planned', `Planned "${recipe.title}" for ${dateStr}`);
+    }
   };
 
   const removeFromMealPlan = (dateKey, recipeId) => {
+    const recipe = recipes.find(r => r.id === recipeId);
     removeFromMealPlanContext(dateKey, recipeId);
+    
+    if (recipe) {
+      const date = new Date(dateKey);
+      const dateStr = date.toLocaleDateString(undefined, { 
+        month: 'short', 
+        day: 'numeric' 
+      });
+      addActivity('meal_removed', `Removed "${recipe.title}" from ${dateStr}`);
+    }
   };
 
   const handleImportData = (jsonString) => {
