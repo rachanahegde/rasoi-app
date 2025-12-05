@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, LayoutGrid, List, Plus, Heart, Clock, Flame, GripVertical, Filter, X, ChefHat, Utensils, Leaf, Timer, ShoppingBasket } from 'lucide-react';
+import { Search, LayoutGrid, List, Plus, Heart, Clock, Flame, GripVertical, Filter, X, ChefHat, Utensils, Leaf, Timer, ShoppingBasket, Loader } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -29,7 +29,8 @@ const RecipesList = ({
     filterTime, setFilterTime,
     filterIngredients, setFilterIngredients,
     filterFavorites, setFilterFavorites,
-    filterRecent, setFilterRecent
+    filterRecent, setFilterRecent,
+    loading
 }) => {
     const [draggedIndex, setDraggedIndex] = useState(null);
     const [dragOverIndex, setDragOverIndex] = useState(null);
@@ -264,7 +265,12 @@ const RecipesList = ({
                 )}
             </div>
 
-            {filteredRecipes && filteredRecipes.length > 0 ? (
+            {loading ? (
+                <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+                    <Loader className="w-8 h-8 animate-spin mb-4" />
+                    <p className="font-serif italic">Loading your notebook...</p>
+                </div>
+            ) : filteredRecipes && filteredRecipes.length > 0 ? (
                 <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" : "space-y-4"}>
                     {filteredRecipes.map((recipe, index) => (
                         viewMode === 'grid' ? (
@@ -304,7 +310,10 @@ const RecipesList = ({
                                     <div className="flex justify-between items-start">
                                         <h3 className="font-serif font-bold text-lg text-foreground">{recipe.title}</h3>
                                         <button
-                                            onClick={(e) => toggleFavorite(e, recipe.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleFavorite(recipe.id);
+                                            }}
                                             className={`p-2 hover:bg-muted rounded-full ${recipe.favorite ? 'text-destructive' : 'text-muted'}`}
                                         >
                                             <Heart className={`w-5 h-5 ${recipe.favorite ? 'fill-current' : ''}`} />

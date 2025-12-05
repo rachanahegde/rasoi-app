@@ -18,7 +18,10 @@ const RecipeCard = ({ recipe, onClick, onToggleFav }) => (
             </div>
 
             <button
-                onClick={(e) => onToggleFav(e, recipe.id)}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleFav(recipe.id);
+                }}
                 className="absolute top-2 right-2 bg-card/90 backdrop-blur p-2 rounded-full shadow-sm hover:bg-destructive/10 transition-colors"
             >
                 <Heart className={`w-4 h-4 ${recipe.favorite ? 'fill-destructive text-destructive' : 'text-muted'}`} />

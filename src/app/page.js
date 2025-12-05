@@ -254,7 +254,7 @@ function AppContent() {
       });
     }
     if (filterFavorites) {
-      filtered = filtered.filter(r => r.isFavorite);
+      filtered = filtered.filter(r => r.favorite);
     }
     if (filterRecent) {
       // Filter recipes that have been added to meal plan in the last 7 days
@@ -350,17 +350,18 @@ function AppContent() {
           )}
           {view === 'recipes' && (
           <RecipesList 
-            recipes={filteredRecipes} 
+            filteredRecipes={filteredRecipes} 
             allRecipes={recipes}
-            onRecipeClick={(id) => navigateTo('detail', id)}
-            onAddRecipe={() => navigateTo('generate')}
+            loading={loading}
+            navigateTo={navigateTo}
+            toggleFavorite={toggleFavorite}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             sortOrder={sortOrder}
             setSortOrder={setSortOrder}
             viewMode={viewMode}
             setViewMode={setViewMode}
-            onReorder={reorderRecipes}
+            reorderRecipes={reorderRecipes}
             
             // Pass filter props
             filterMealType={filterMealType}
