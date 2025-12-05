@@ -77,22 +77,11 @@ const GeneratorPage = ({
             toast.success('✓ AI variation ready! Review and save below.');
             addActivity('variation_generated', `Generated AI variation: ${result.title}`);
             
-            // Generate tag suggestions for the AI-generated recipe
-            setLoadingSuggestions(true);
-            try {
-                const suggestions = await suggestTags({
-                    title: result.title,
-                    description: result.description || '',
-                    ingredients: result.ingredients || [],
-                    steps: result.steps || []
-                });
-                setSuggestedTags(suggestions);
-                // Auto-populate with suggestions
-                setCustomTags(suggestions.slice(0, 5).join(', '));
-            } catch (error) {
-                console.error('Error generating tag suggestions:', error);
-            } finally {
-                setLoadingSuggestions(false);
+            // Use tags directly from AI response
+            if (result.tags && Array.isArray(result.tags)) {
+                setSuggestedTags(result.tags);
+                // Auto-populate with the AI provided tags
+                setCustomTags(result.tags.join(', '));
             }
         } catch (error) {
             console.error("Generation failed:", error);

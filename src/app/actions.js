@@ -104,7 +104,7 @@ export async function generateRecipeAction(prompt, ingredients) {
     "time": "e.g. 30 min",
     "difficulty": "Easy/Medium/Hard",
     "calories": "e.g. 400 kcal",
-    "tags": ["2-3 tags"],
+    "tags": ["Provide exactly 5 tags including: 1. Meal Type (Breakfast/Lunch/Dinner/Snack), 2. Flavor Profile (Sweet/Savory), 3. Dietary (Vegetarian/Vegan/etc), 4. Cuisine (Italian/Indian/etc), 5. One other relevant tag"],
     "ingredients": ["List 6-10 ingredients with quantities"],
     "steps": ["5-8 clear, concise steps (each max 15 words)"]
     }
