@@ -60,8 +60,7 @@ const Dashboard = ({
                         onAddRecipe={(date, recipeId) => addToMealPlan(recipeId, date)}
                         onRemoveRecipe={(date, idx) => {
                             const dateKey = date.toDateString();
-                            const recipeId = mealPlan[dateKey][idx];
-                            removeFromMealPlan(dateKey, recipeId);
+                            removeFromMealPlan(dateKey, idx);
                         }}
                         navigateTo={navigateTo}
                         compact={true}

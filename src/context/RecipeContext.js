@@ -100,11 +100,23 @@ export function RecipeProvider({ children }) {
         }));
     };
 
-    const removeFromMealPlan = (dateKey, recipeId) => {
-        setMealPlan(prev => ({
-            ...prev,
-            [dateKey]: prev[dateKey].filter(id => id !== recipeId)
-        }));
+    const removeFromMealPlan = (dateKey, indexToRemove) => {
+        setMealPlan(prev => {
+            const currentRecipes = prev[dateKey] || [];
+            const updatedRecipes = currentRecipes.filter((_, index) => index !== indexToRemove);
+            
+            // If no recipes left for this date, remove the date key entirely
+            if (updatedRecipes.length === 0) {
+                const { [dateKey]: removed, ...rest } = prev;
+                return rest;
+            }
+            
+            // Otherwise, update with the filtered array
+            return {
+                ...prev,
+                [dateKey]: updatedRecipes
+            };
+        });
     };
 
     const importData = (jsonString) => {

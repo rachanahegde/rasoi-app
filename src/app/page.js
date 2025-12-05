@@ -155,10 +155,16 @@ function AppContent() {
     }
   };
 
-  const removeFromMealPlan = (dateKey, recipeId) => {
+  const removeFromMealPlan = (dateKey, indexToRemove) => {
+    // Get the recipe info before removing for activity logging
+    const recipesForDay = mealPlan[dateKey] || [];
+    const recipeId = recipesForDay[indexToRemove];
     const recipe = recipes.find(r => r.id === recipeId);
-    removeFromMealPlanContext(dateKey, recipeId);
     
+    // Remove from meal plan
+    removeFromMealPlanContext(dateKey, indexToRemove);
+    
+    // Log activity
     if (recipe) {
       const date = new Date(dateKey);
       const dateStr = date.toLocaleDateString(undefined, { 
