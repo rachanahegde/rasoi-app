@@ -405,37 +405,6 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
                                 </div>
                             </div>
                         )}
-                        
-                        {/* Suggested tags */}
-                        <div className="space-y-2">
-                            <p className="text-xs text-muted-foreground">Quick Add:</p>
-                            <div className="flex flex-wrap gap-2">
-                                {['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Dessert', 'Vegetarian', 'Vegan', 'Gluten-Free', 'Quick & Easy', 'Comfort Food', 'Healthy', 'Indian', 'Italian', 'Mexican', 'Asian'].map(suggestion => {
-                                    const currentTags = formData.tags.split(',').map(t => t.trim()).filter(t => t);
-                                    const isAdded = currentTags.includes(suggestion);
-                                    return (
-                                        <button
-                                            key={suggestion}
-                                            type="button"
-                                            onClick={() => {
-                                                if (!isAdded) {
-                                                    const newTags = currentTags.concat(suggestion).join(', ');
-                                                    handleChange('tags', newTags);
-                                                }
-                                            }}
-                                            disabled={isAdded}
-                                            className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
-                                                isAdded 
-                                                    ? 'bg-primary/10 text-primary border-primary/20 cursor-not-allowed opacity-50' 
-                                                    : 'bg-muted text-muted-foreground border-border hover:border-primary hover:text-primary'
-                                            }`}
-                                        >
-                                            {isAdded ? '✓ ' : '+ '}{suggestion}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
                     </div>
 
                     <div className="pt-4 flex gap-4 border-t border-border mt-6">
