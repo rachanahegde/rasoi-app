@@ -45,7 +45,8 @@ function AppContent() {
     removeFromMealPlan: removeFromMealPlanContext,
     setGroceryState,
     setMealPlan,
-    importData
+    importData,
+    reorderRecipes
   } = useRecipes();
 
   const toast = useToast();
@@ -55,7 +56,7 @@ function AppContent() {
   const [activeRecipeId, setActiveRecipeId] = useState(null);
   // recipes, mealPlan, loading, groceryState moved to context
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortOrder, setSortOrder] = useState('newest');
+  const [sortOrder, setSortOrder] = useState('manual');
   const [viewMode, setViewMode] = useState('grid');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [aiPrompt, setAiPrompt] = useState('');
@@ -192,13 +193,20 @@ function AppContent() {
         return tokens.every(token => searchable.includes(token));
       });
     }
-    return filtered.sort((a, b) => {
-      if (sortOrder === 'newest') return b.createdAt - a.createdAt;
-      if (sortOrder === 'oldest') return a.createdAt - b.createdAt;
-      if (sortOrder === 'a-z') return a.title.localeCompare(b.title);
-      if (sortOrder === 'z-a') return b.title.localeCompare(a.title);
-      return 0;
-    });
+    
+    // Only sort if a specific sort order is selected (not 'manual')
+    if (sortOrder !== 'manual') {
+      return filtered.sort((a, b) => {
+        if (sortOrder === 'newest') return b.createdAt - a.createdAt;
+        if (sortOrder === 'oldest') return a.createdAt - b.createdAt;
+        if (sortOrder === 'a-z') return a.title.localeCompare(b.title);
+        if (sortOrder === 'z-a') return b.title.localeCompare(a.title);
+        return 0;
+      });
+    }
+    
+    // Return in original order (manual/custom order)
+    return filtered;
   };
 
   const filteredRecipes = getFilteredRecipes();
@@ -275,6 +283,8 @@ function AppContent() {
               setViewMode={setViewMode}
               navigateTo={navigateTo}
               toggleFavorite={toggleFavorite}
+              reorderRecipes={reorderRecipes}
+              allRecipes={recipes}
             />
           )}
           {view === 'detail' && (

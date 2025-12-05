@@ -121,6 +121,10 @@ export function RecipeProvider({ children }) {
         return false;
     };
 
+    const reorderRecipes = (newOrder) => {
+        setRecipes(newOrder);
+    };
+
     return (
         <RecipeContext.Provider value={{
             recipes,
@@ -136,7 +140,8 @@ export function RecipeProvider({ children }) {
             toggleFavorite,
             addToMealPlan,
             removeFromMealPlan,
-            importData
+            importData,
+            reorderRecipes
         }}>
             {children}
         </RecipeContext.Provider>
