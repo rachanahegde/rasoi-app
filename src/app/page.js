@@ -64,6 +64,19 @@ function AppContent() {
   // groceryState moved to context
   const [darkMode, setDarkMode] = useState(false);
 
+  // Load viewMode preference from localStorage on mount
+  useEffect(() => {
+    const storedViewMode = localStorage.getItem('chefs_notebook_view_mode');
+    if (storedViewMode) {
+      setViewMode(storedViewMode);
+    }
+  }, []);
+
+  // Save viewMode preference to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('chefs_notebook_view_mode', viewMode);
+  }, [viewMode]);
+
   useEffect(() => {
     // Check system preference on initial load if no preference stored
     const storedDarkMode = localStorage.getItem('chefs_notebook_dark_mode');
