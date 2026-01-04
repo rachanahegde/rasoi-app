@@ -13,36 +13,36 @@ Initial color palette (for regular mode): https://coolors.co/palette/6f1d1b-bb94
 A warm, personal design that mimics the feel of a handwritten cookbook.
 
 🍲 Recipe Management
-Create, edit, and save your recipes
-Organize ingredients, steps, tags, categories
-Add notes, tips, and sub-sections
-Visual recipe cards with a cozy, minimal layout
+- Create, edit, and save your recipes
+- Organize ingredients, steps, tags, categories
+- Add notes, tips, and sub-sections
+- Visual recipe cards with a cozy, minimal layout
 
 ✨ AI-Assisted Recipe Generation
-Ability to generate recipe ideas
-Variation generation (“Make this spicier”, “Give me a quicker version”, etc.)
+- Ability to generate recipe ideas
+- Variation generation (“Make this spicier”, “Give me a quicker version”, etc.)
 
 🗂️ Smart Organization Tools
-Search recipes by title, ingredients, tags
-Sorting by alphabetical, newest, or most used
-Tag-based filtering
-Optional calendar tile for meal planning (MVP or future feature)
+- Search recipes by title, ingredients, tags
+- Sorting by alphabetical, newest, or most used
+- Tag-based filtering
+- Meal planning using the calendar monthly or weekly view
 
 💾 Local Storage Persistence and Database Integration
-Recipes, preferences, and UI state saved automatically
-Works offline for personal use
+- Recipes, preferences, and UI state saved automatically
+- TBD: Works offline for personal use
 
 🎛️ Aesthetic UX Enhancements
-Smooth micro-animations
-Responsive layout optimized for desktop and mobile
+- Smooth micro-animations
+- Responsive layout optimized for desktop and mobile
 
 🧰 Tech Stack
 Frontend
 - Next.js — App Router, server/client rendering
 - React — component-based UI
 - Tailwind CSS — utility-first styling
-shadcn/ui — accessible, elegant components
-Lucide React — minimalist icon set
+- shadcn/ui — accessible, elegant components
+- Lucide React — minimalist icon set
 
 State & Data
 - Local state (React)
@@ -55,7 +55,6 @@ Abstraction layer for plugging in: Google Gemini, OpenAI GPT, Llama / Local infe
 Build & Deploy: Vercel
 
 🧪 Current Status: MVP
-
 Rasoi currently focuses on UI/UX, recipe creation, and local functionality. AI generation is mocked but wired into a clean UI flow. The structure is ready for future backend, user accounts, and real AI integrations.
 
 🌱 Roadmap
