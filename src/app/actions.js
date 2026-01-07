@@ -8,16 +8,14 @@ const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
 const AUTH_TAG_LENGTH = 16;
 
-// Get encryption key from environment variable
-// In production, set this in your .env.local file
-// For development, we'll generate a fallback (not recommended for production)
+// Get encryption key from environment variable - this is in .env.local for development
+// In production, ENCRYPTION_SECRET is set in your environment variables (e.g., Vercel dashboard)
 function getEncryptionKey() {
     const envKey = process.env.ENCRYPTION_SECRET;
     if (!envKey) {
-        console.warn('ENCRYPTION_SECRET not set. Using fallback key. Set ENCRYPTION_SECRET in .env.local for production.');
-        // Fallback for development only - in production you MUST set ENCRYPTION_SECRET
-        return crypto.scryptSync('rasoi-app-default-secret-change-me', 'salt', 32);
+        throw new Error('ENCRYPTION_SECRET is required but not set.');
     }
+    // Derives a 32-byte key from the environment secret
     return crypto.scryptSync(envKey, 'salt', 32);
 }
 
