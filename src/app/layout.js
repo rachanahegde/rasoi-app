@@ -4,6 +4,7 @@ import { AppProviders } from "@/context/AppProviders";
 import DottedBackground from "@/components/DottedBackground";
 import ToastContainer from "@/components/ToastContainer";
 import Navigation from "@/components/Navigation";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({ children }) {
             </main>
           </div>
         </AppProviders>
+        <Analytics />
       </body>
     </html>
   );
