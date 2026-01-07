@@ -28,6 +28,7 @@ const GeneratorPage = ({
     const [ingredients, setIngredients] = useState(aiIngredients || '');
     const [generated, setGenerated] = useState(null);
     const [customImage, setCustomImage] = useState(null);
+    const [customNotes, setCustomNotes] = useState('');
     const [urlInput, setUrlInput] = useState('');
     const [showUrlInput, setShowUrlInput] = useState(false);
     const [loadingImage, setLoadingImage] = useState(false);
@@ -192,6 +193,7 @@ const GeneratorPage = ({
         const recipeToSave = {
             ...generated,
             image: customImage || generated.image,
+            notes: customNotes,
             tags: customTags ? customTags.split(',').map(t => t.trim()).filter(t => t) : (generated.tags || [])
         };
         handleSaveRecipe(recipeToSave);
@@ -317,7 +319,7 @@ const GeneratorPage = ({
                         <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mb-6 animate-pulse border-4 border-double border-border">
                             <ChefHat className="w-10 h-10 text-muted-foreground" />
                         </div>
-                        <h3 className="text-xl font-serif font-bold mb-2 text-muted-foreground">Consulting the notes...</h3>
+                        <h3 className="text-xl font-serif font-bold mb-2 text-muted-foreground">Preparing your recipe...</h3>
                     </div>
                 ) : generated ? (
                     <div className="animate-in slide-in-from-bottom-8 duration-700 pb-20 paper-card p-8 rounded-xl bg-card border border-border relative">
@@ -524,6 +526,19 @@ const GeneratorPage = ({
                                     onChange={e => setCustomTags(e.target.value)}
                                     placeholder="Type tags separated by commas..."
                                     className="bg-muted mb-3 text-sm"
+                                />
+                            </div>
+
+                            {/* Chef's Notes Section */}
+                            <div className="border-t border-border pt-6">
+                                <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-3 flex items-center gap-2">
+                                    Chef's Personal Notes <span className="text-[10px] bg-accent/20 text-accent-foreground px-1.5 py-0.5 rounded">Optional</span>
+                                </h4>
+                                <textarea
+                                    className="flex min-h-[80px] w-full rounded-lg border border-dashed border-accent/40 bg-accent/5 px-4 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 font-serif italic mb-3"
+                                    value={customNotes}
+                                    onChange={e => setCustomNotes(e.target.value)}
+                                    placeholder="e.g. Try it with a side of garlic bread, or use extra chili..."
                                 />
                             </div>
 

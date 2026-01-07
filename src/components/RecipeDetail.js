@@ -20,15 +20,15 @@ const RecipeDetail = ({
     const isScheduled = mealPlan && mealPlan[selectedDate.toDateString()]?.includes(activeRecipeId);
 
     return (
-        <div className="max-w-4xl mx-auto animate-in zoom-in-95 duration-300 pb-20">
+        <div className="max-w-6xl mx-auto animate-in zoom-in-95 duration-300 pb-20">
             <Button variant="ghost" onClick={() => navigateTo('recipes')} className="mb-4 pl-0 hover:bg-transparent hover:text-primary font-serif italic">
                 <ArrowLeft className="w-4 h-4 mr-2" /> Back to Index
             </Button>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                 {/* Left: Visuals */}
-                <div className="space-y-6">
-                    <div className="relative aspect-[4/5] rounded-sm p-2 bg-card shadow-md border border-border -rotate-1">
+                <div className="lg:col-span-5 space-y-6">
+                    <div className="relative aspect-square rounded-sm p-2 bg-card shadow-md border border-border -rotate-1">
                         {/* Photo frame look */}
                         <div className="h-full w-full overflow-hidden bg-muted relative">
                             <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover sepia-[.1]" />
@@ -85,7 +85,7 @@ const RecipeDetail = ({
                 </div>
 
                 {/* Right: Journal Entry */}
-                <div className="space-y-8 relative">
+                <div className="lg:col-span-7 space-y-8 relative">
                     {/* Paper texture background for text area */}
                     <div className="absolute inset-0 bg-card border-l-2 border-dashed border-border -z-10 translate-x-4"></div>
 
@@ -116,6 +116,19 @@ const RecipeDetail = ({
                             <Sparkles className="w-4 h-4 mr-2 text-accent group-hover:scale-125 transition-transform" /> Brainstorm variations
                         </Button>
                     </div>
+
+                    {recipe.notes && (
+                        <div className="pl-6 pt-4">
+                            <div className="bg-accent/5 border border-dashed border-accent/30 rounded-lg p-6 relative overflow-hidden group">
+                                <h3 className="text-lg font-serif font-bold mb-3 flex items-center gap-2 text-primary">
+                                    Chef's Personal Notes
+                                </h3>
+                                <p className="text-foreground font-serif italic leading-relaxed relative z-10">
+                                    {recipe.notes}
+                                </p>
+                            </div>
+                        </div>
+                    )}
 
                     <div className="pl-6 pt-4">
                         <h3 className="text-xl font-serif font-bold mb-4 flex items-center gap-2 text-foreground border-b border-border pb-2">

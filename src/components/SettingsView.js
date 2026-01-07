@@ -32,7 +32,7 @@ const SettingsView = ({ recipes, mealPlan, handleImportData, darkMode, toggleDar
             </Card>
             <Card className="p-8 bg-card">
                 <h3 className="text-xl font-bold font-serif mb-4 flex items-center gap-2 text-foreground">
-                    <Download className="w-5 h-5" /> Backup Notes
+                    <Download className="w-5 h-5" /> Backup Recipes
                 </h3>
                 <div className="relative">
                     <textarea
@@ -47,7 +47,7 @@ const SettingsView = ({ recipes, mealPlan, handleImportData, darkMode, toggleDar
             </Card>
             <Card className="p-8 bg-card">
                 <h3 className="text-xl font-bold font-serif mb-4 flex items-center gap-2 text-foreground">
-                    <Upload className="w-5 h-5" /> Restore Notes
+                    <Upload className="w-5 h-5" /> Restore Recipes
                 </h3>
                 <textarea
                     className="w-full h-32 p-4 rounded-lg bg-background border border-border text-xs font-mono resize-none focus:ring-2 focus:ring-ring mb-4"

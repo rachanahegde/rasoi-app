@@ -10,6 +10,7 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
+        notes: '',
         time: '',
         difficulty: 'Easy',
         calories: '',
@@ -19,6 +20,7 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
         ...initialData,
         ingredients: initialData.ingredients || [''],
         steps: initialData.steps || [''],
+        notes: initialData.notes || '',
         tags: initialData.tags ? initialData.tags.join(', ') : ''
     });
     const [imageUrl, setImageUrl] = useState(initialData.image || '');
@@ -142,7 +144,7 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
     };
 
     return (
-        <div className="max-w-3xl mx-auto animate-in slide-in-from-bottom-4 duration-500 pb-20">
+        <div className="max-w-5xl mx-auto animate-in slide-in-from-bottom-4 duration-500 pb-20">
             <Button variant="ghost" onClick={() => navigateTo('recipes')} className="mb-4 pl-0 font-serif italic">
                 <ArrowLeft className="w-4 h-4 mr-2" /> Cancel Entry
             </Button>
@@ -189,13 +191,27 @@ const RecipeForm = ({ initialData = {}, handleSaveRecipe, navigateTo }) => {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Notes / Description</label>
+                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Description</label>
                         <textarea
                             className="flex min-h-[100px] w-full rounded-lg border border-input bg-muted px-4 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring font-serif leading-relaxed"
                             value={formData.description}
                             onChange={e => handleChange('description', e.target.value)}
-                            placeholder="Jot down your thoughts..."
+                            placeholder="A brief description of this dish..."
                         />
+                    </div>
+
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                            <label className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Chef's Notes</label>
+                            <span className="text-[10px] bg-accent/20 text-accent-foreground px-1.5 py-0.5 rounded uppercase tracking-tighter font-bold">Personal Tips</span>
+                        </div>
+                        <textarea
+                            className="flex min-h-[80px] w-full rounded-lg border border-dashed border-accent/40 bg-accent/5 px-4 py-3 text-sm ring-offset-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 font-serif italic"
+                            value={formData.notes}
+                            onChange={e => handleChange('notes', e.target.value)}
+                            placeholder="e.g. Replace cream with milk for a lighter version, or add a pinch of saffron..."
+                        />
+                        <p className="text-[10px] text-muted-foreground italic">Optional: Tips, variations, or reminders for yourself.</p>
                     </div>
 
                     <div className="space-y-4">
