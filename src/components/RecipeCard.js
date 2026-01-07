@@ -20,7 +20,7 @@ const RecipeCard = ({ recipe, onClick, onToggleFav }) => (
             <button
                 onClick={(e) => {
                     e.stopPropagation();
-                    onToggleFav(recipe.id);
+                    onToggleFav(e, recipe.id);
                 }}
                 className="absolute top-2 right-2 bg-card/90 backdrop-blur p-2 rounded-full shadow-sm hover:bg-destructive/10 transition-colors"
             >

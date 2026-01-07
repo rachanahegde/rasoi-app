@@ -5,11 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import RecipeCard from '@/components/RecipeCard';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select"
 
 const RecipesList = ({
@@ -53,7 +53,7 @@ const RecipesList = ({
 
     const handleDrop = (e, dropIndex) => {
         e.preventDefault();
-        
+
         if (draggedIndex === null || draggedIndex === dropIndex) {
             setDraggedIndex(null);
             setDragOverIndex(null);
@@ -127,7 +127,7 @@ const RecipesList = ({
                                 <List className="w-4 h-4" />
                             </button>
                         </div>
-                        
+
                         {canReorder && viewMode === 'list' && (
                             <div className="group relative flex items-center justify-center h-10 w-10">
                                 <Info className="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors cursor-help" />
@@ -138,8 +138,8 @@ const RecipesList = ({
                             </div>
                         )}
 
-                        <Button 
-                            variant="outline" 
+                        <Button
+                            variant="outline"
                             size="icon"
                             onClick={() => setShowFilters(!showFilters)}
                             className={`rounded-lg border-border ${showFilters || hasActiveFilters ? 'bg-primary/10 text-primary border-primary/30' : ''}`}
@@ -317,9 +317,9 @@ const RecipesList = ({
                                     </div>
                                 )}
 
-                                <img 
-                                    src={recipe.image} 
-                                    className="w-20 h-20 rounded-lg object-cover sepia-[.15]" 
+                                <img
+                                    src={recipe.image}
+                                    className="w-20 h-20 rounded-lg object-cover sepia-[.15]"
                                     alt="thumb"
                                     onClick={() => navigateTo('detail', recipe.id)}
                                 />
@@ -329,7 +329,7 @@ const RecipesList = ({
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                toggleFavorite(recipe.id);
+                                                toggleFavorite(e, recipe.id);
                                             }}
                                             className={`p-2 hover:bg-muted rounded-full ${recipe.favorite ? 'text-destructive' : 'text-muted'}`}
                                         >

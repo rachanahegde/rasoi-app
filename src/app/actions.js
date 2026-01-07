@@ -79,7 +79,7 @@ export async function hasApiKey() {
     return cookieStore.has(COOKIE_NAME);
 }
 
-export async function generateRecipeAction(prompt, ingredients) {
+export async function generateRecipeAction(prompt, ingredients, preferences = {}) {
     const cookieStore = await cookies();
     const encryptedKey = cookieStore.get(COOKIE_NAME)?.value;
 
@@ -95,7 +95,39 @@ export async function generateRecipeAction(prompt, ingredients) {
         throw new Error('Failed to decrypt API key. Please re-enter your key.');
     }
 
-    const systemPrompt = `You are a chef. Create a concise recipe based on: "${prompt}" using: ${ingredients || 'any ingredients'}.
+    // Build user profile context
+    const {
+        dietary = [],
+        cuisines = [],
+        skillLevel = 'Intermediate',
+        spiceTolerance = 'Medium',
+        equipment = [],
+        dislikes = '',
+        allergies = '',
+        typicalTime = '30-45'
+    } = preferences;
+
+    const userProfile = `
+    User Profile:
+    - Dietary Restrictions: ${dietary.join(', ') || 'None'}
+    - CRITICAL Allergies: ${allergies || 'None'} (NEVER use these as core ingredients. If essential to a dish, provide a safe alternative).
+    - Cuisines they love: ${cuisines.join(', ') || 'Global'}
+    - Skill Level: ${skillLevel}
+    - Spice Tolerance: ${spiceTolerance}
+    - Kitchen Gear Available: ${equipment.join(', ') || 'Standard Stove/Oven'}
+    - Dislikes: ${dislikes || 'None'}
+    - Preferred Cook Time: Around ${typicalTime} minutes.
+    `;
+
+    const systemPrompt = `You are a personalized chef. Create a concise recipe based on: "${prompt}" using: ${ingredients || 'any ingredients'}.
+
+    ${userProfile}
+
+    IMPORTANT: 
+    1. If an allergy ingredient is mentioned in the prompt or is traditionally core to the requested dish, you MUST modify the recipe to remove/replace it.
+    2. Tailor the complexity and equipment to the user's skill level and arsenal.
+    3. CONTEXTUAL INTELLIGENCE: Apply spice tolerance and flavor DNA ONLY when it makes culinary sense for the dish and Meal Type. For example, never generate "Spicy Cookies" or "Hot Oatmeal" just because the user has a high spice tolerance, unless they specifically asked for it.
+    4. Prioritize their favorite cuisines if the prompt is flexible.
 
     Return ONLY valid JSON (no markdown):
     {
@@ -104,7 +136,7 @@ export async function generateRecipeAction(prompt, ingredients) {
     "time": "e.g. 30 min",
     "difficulty": "Easy/Medium/Hard",
     "calories": "e.g. 400 kcal",
-    "tags": ["Provide exactly 5 tags including: 1. Meal Type (Breakfast/Lunch/Dinner/Snack), 2. Flavor Profile (Sweet/Savory), 3. Dietary (Vegetarian/Vegan/etc), 4. Cuisine (Italian/Indian/etc), 5. One other relevant tag"],
+    "tags": ["Provide exactly 5 tags including: 1. Meal Type, 2. Flavor Profile, 3. Dietary, 4. Cuisine, 5. Specific Ingredient/Theme"],
     "ingredients": ["List 6-10 ingredients with quantities"],
     "steps": ["5-8 clear, concise steps (each max 15 words)"]
     }
@@ -136,6 +168,7 @@ export async function generateRecipeAction(prompt, ingredients) {
         // Add a random image or placeholder
         recipe.image = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80";
         recipe.createdAt = Date.now();
+        recipe.isAI = true;
 
         return recipe;
     } catch (error) {

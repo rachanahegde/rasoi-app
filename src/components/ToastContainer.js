@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useState } from 'react';
 import { X, CheckCircle2, AlertCircle, Info } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
@@ -56,7 +57,7 @@ const Toast = ({ toast }) => {
         >
             {/* Sticky note tape effect - using muted (tan) color from palette */}
             <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-16 h-4 bg-muted/80 border border-border/30 rotate-1 backdrop-blur-sm shadow-sm"></div>
-            
+
             <div className="flex items-start gap-3">
                 {getIcon()}
                 <p className="flex-1 text-sm font-medium font-serif leading-relaxed">

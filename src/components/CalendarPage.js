@@ -109,13 +109,13 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
             ...mealPlan,
             [dateKey]: [...currentPlan, recipeId]
         });
-        
+
         // Log activity
         const recipe = recipes.find(r => r.id === recipeId);
         if (recipe) {
-            const dateStr = date.toLocaleDateString(undefined, { 
-                month: 'short', 
-                day: 'numeric' 
+            const dateStr = date.toLocaleDateString(undefined, {
+                month: 'short',
+                day: 'numeric'
             });
             addActivity('meal_planned', `Planned "${recipe.title}" for ${dateStr}`);
         }
@@ -131,9 +131,9 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
         // Log activity before removing
         const recipe = recipes.find(r => r.id === recipeId);
         if (recipe) {
-            const dateStr = date.toLocaleDateString(undefined, { 
-                month: 'short', 
-                day: 'numeric' 
+            const dateStr = date.toLocaleDateString(undefined, {
+                month: 'short',
+                day: 'numeric'
             });
             addActivity('meal_removed', `Removed "${recipe.title}" from ${dateStr}`);
         }
@@ -186,16 +186,16 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
         });
 
         const itemsArray = Object.values(ingredients);
-        
+
         // Get custom order from groceryState
         const customOrder = groceryState['_order'] || [];
-        
+
         // Sort by custom order if it exists, otherwise by checked status and name
         if (customOrder.length > 0) {
             return itemsArray.sort((a, b) => {
                 const aIndex = customOrder.indexOf(a.id);
                 const bIndex = customOrder.indexOf(b.id);
-                
+
                 // If both have custom positions, use those
                 if (aIndex !== -1 && bIndex !== -1) {
                     return aIndex - bIndex;
@@ -203,13 +203,13 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                 // If only one has a custom position, it goes first
                 if (aIndex !== -1) return -1;
                 if (bIndex !== -1) return 1;
-                
+
                 // Otherwise, use default sorting
                 if (a.checked === b.checked) return a.name.localeCompare(b.name);
                 return a.checked ? 1 : -1;
             });
         }
-        
+
         return itemsArray.sort((a, b) => {
             if (a.checked === b.checked) return a.name.localeCompare(b.name);
             return a.checked ? 1 : -1;
@@ -237,7 +237,7 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
 
     const handleGroceryDrop = (e, dropIndex) => {
         e.preventDefault();
-        
+
         if (draggedGroceryItem === null || draggedGroceryItem.index === dropIndex) {
             setDraggedGroceryItem(null);
             setDragOverIndex(null);
@@ -279,7 +279,7 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
 
     const handleMealDrop = (e, dropIndex) => {
         e.preventDefault();
-        
+
         if (draggedMealItem === null || draggedMealItem === dropIndex) {
             setDraggedMealItem(null);
             setDragOverMealIndex(null);
@@ -289,7 +289,7 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
         const dateKey = selectedDay.toDateString();
         const currentMeals = mealPlan[dateKey] || [];
         const newMeals = [...currentMeals];
-        
+
         // Reorder the meals
         const [removed] = newMeals.splice(draggedMealItem, 1);
         newMeals.splice(dropIndex, 0, removed);
@@ -366,7 +366,7 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                 </div>
                             ))}
                         </div>
-                        
+
                         {/* Day Cells - Flex to fill remaining space */}
                         <div className="flex-1 grid grid-cols-7 bg-border gap-px overflow-y-auto">
                             {calendarDays.map((date, i) => {
@@ -405,8 +405,12 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                                 const recipe = recipes.find(r => r.id === rId);
                                                 if (!recipe) return null;
                                                 return (
-                                                    <div key={`${dateKey}-${idx}`} className="text-xs p-1.5 rounded bg-background border border-border shadow-sm truncate font-medium text-foreground flex items-center gap-1 group/item">
-                                                        <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                                                    <div key={`${dateKey}-${idx}`} className="text-xs p-1.5 rounded bg-background border border-border shadow-sm truncate font-medium text-foreground flex items-center gap-2 group/item">
+                                                        {recipe.image ? (
+                                                            <img src={recipe.image} className="w-5 h-5 rounded-full object-cover shrink-0" alt="" />
+                                                        ) : (
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                                                        )}
                                                         <span className="truncate">{recipe.title}</span>
                                                     </div>
                                                 );
@@ -442,57 +446,61 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                 const dateKey = date.toDateString();
                                 const dayRecipes = mealPlan[dateKey] || [];
 
-                            return (
-                                <div
-                                    key={i}
-                                    onClick={() => handleDayClick(date)}
-                                    onDragOver={handleDragOver}
-                                    onDrop={(e) => handleDrop(e, date)}
-                                    className={`
+                                return (
+                                    <div
+                                        key={i}
+                                        onClick={() => handleDayClick(date)}
+                                        onDragOver={handleDragOver}
+                                        onDrop={(e) => handleDrop(e, date)}
+                                        className={`
                                         bg-background p-2 transition-colors cursor-pointer relative group flex flex-col h-full
                                         ${!isCurrentMonth ? 'bg-muted/50 text-muted-foreground' : ''}
                                         ${isSelected ? 'ring-2 ring-inset ring-primary bg-primary/10' : 'hover:bg-muted'}
                                     `}
-                                >
-                                    {/* Header - Date and Badge (Fixed) */}
-                                    <div className="flex justify-between items-start mb-2 shrink-0">
-                                        <span className={`
+                                    >
+                                        {/* Header - Date and Badge (Fixed) */}
+                                        <div className="flex justify-between items-start mb-2 shrink-0">
+                                            <span className={`
                                             w-7 h-7 flex items-center justify-center rounded-full text-sm font-serif
                                             ${isToday ? 'bg-primary text-primary-foreground shadow-md' : 'text-muted-foreground'}
                                         `}>
-                                            {date.getDate()}
-                                        </span>
-                                        {dayRecipes.length > 0 && (
-                                            <Badge variant="secondary" className="text-[10px] px-1.5 h-5 bg-accent text-accent-foreground hover:bg-accent/90 border-accent">
-                                                {dayRecipes.length}
-                                            </Badge>
-                                        )}
-                                    </div>
+                                                {date.getDate()}
+                                            </span>
+                                            {dayRecipes.length > 0 && (
+                                                <Badge variant="secondary" className="text-[10px] px-1.5 h-5 bg-accent text-accent-foreground hover:bg-accent/90 border-accent">
+                                                    {dayRecipes.length}
+                                                </Badge>
+                                            )}
+                                        </div>
 
-                                    {/* Recipe List - Scrollable */}
-                                    <div className="flex-1 overflow-y-auto space-y-1.5 pr-1 custom-scrollbar min-h-0">
-                                        {dayRecipes.map((rId, idx) => {
-                                            const recipe = recipes.find(r => r.id === rId);
-                                            if (!recipe) return null;
-                                            return (
-                                                <div key={`${dateKey}-${idx}`} className="text-xs p-1.5 rounded bg-background border border-border shadow-sm truncate font-medium text-foreground flex items-center gap-1 group/item">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                                                    <span className="truncate">{recipe.title}</span>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
+                                        {/* Recipe List - Scrollable */}
+                                        <div className="flex-1 overflow-y-auto space-y-1.5 pr-1 custom-scrollbar min-h-0">
+                                            {dayRecipes.map((rId, idx) => {
+                                                const recipe = recipes.find(r => r.id === rId);
+                                                if (!recipe) return null;
+                                                return (
+                                                    <div key={`${dateKey}-${idx}`} className="text-xs p-1.5 rounded bg-background border border-border shadow-sm truncate font-medium text-foreground flex items-center gap-2 group/item">
+                                                        {recipe.image ? (
+                                                            <img src={recipe.image} className="w-5 h-5 rounded-full object-cover shrink-0" alt="" />
+                                                        ) : (
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                                                        )}
+                                                        <span className="truncate">{recipe.title}</span>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
 
-                                    {/* Add Button on Hover */}
-                                    <button className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary items-center justify-center hidden group-hover:flex transition-colors">
-                                        <Plus className="w-4 h-4" />
-                                    </button>
-                                </div>
-                            );
-                        })}
+                                        {/* Add Button on Hover */}
+                                        <button className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary items-center justify-center hidden group-hover:flex transition-colors">
+                                            <Plus className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
-            )}
+                )}
             </div>
 
             {/* Side Panel (Day Detail or Grocery List) */}
@@ -514,7 +522,7 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                 {groceryList.length > 0 ? (
                                     <div className="space-y-3">
                                         {groceryList.map((item, index) => (
-                                            <div 
+                                            <div
                                                 key={item.id}
                                                 draggable
                                                 onDragStart={(e) => handleGroceryDragStart(e, item, index)}
@@ -532,8 +540,8 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                                 <div className="mt-1 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing">
                                                     <MoreHorizontal className="w-4 h-4 rotate-90" />
                                                 </div>
-                                                
-                                                <div 
+
+                                                <div
                                                     className={`mt-0.5 w-5 h-5 rounded border flex items-center justify-center transition-colors cursor-pointer ${item.checked ? 'bg-primary border-primary text-primary-foreground' : 'border-input group-hover:border-primary'}`}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
@@ -597,7 +605,7 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                                 const recipe = recipes.find(r => r.id === rId);
                                                 if (!recipe) return null;
                                                 return (
-                                                    <div 
+                                                    <div
                                                         key={idx}
                                                         draggable
                                                         onDragStart={(e) => handleMealDragStart(e, idx)}
@@ -615,12 +623,15 @@ const CalendarPage = ({ recipes, mealPlan, setMealPlan, groceryState, setGrocery
                                                             <div className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing mt-1">
                                                                 <MoreHorizontal className="w-4 h-4 rotate-90" />
                                                             </div>
-                                                            
-                                                            <div className="w-16 h-16 rounded-md bg-muted overflow-hidden shrink-0">
-                                                                {/* Placeholder for image */}
-                                                                <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-muted">
-                                                                    <ChefHat className="w-8 h-8" />
-                                                                </div>
+
+                                                            <div className="w-16 h-16 rounded-md bg-muted overflow-hidden shrink-0 border border-border">
+                                                                {recipe.image ? (
+                                                                    <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
+                                                                ) : (
+                                                                    <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-muted">
+                                                                        <ChefHat className="w-8 h-8" />
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                             <div className="flex-1 min-w-0">
                                                                 <h5 className="font-serif font-bold text-foreground truncate cursor-pointer hover:text-primary" onClick={() => navigateTo('detail', recipe.id)}>

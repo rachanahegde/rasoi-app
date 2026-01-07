@@ -1,3 +1,4 @@
+'use client';
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
 const ToastContext = createContext();
@@ -16,7 +17,7 @@ export const ToastProvider = ({ children }) => {
     const addToast = useCallback((message, type = 'success') => {
         const id = Date.now() + Math.random();
         const newToast = { id, message, type };
-        
+
         setToasts(prev => [...prev, newToast]);
 
         // Auto-remove after 4 seconds

@@ -97,8 +97,11 @@ const WeeklyCalendar = ({
                             return (
                                 <div key={idx} className="group relative pl-2 py-2 cursor-pointer border-b border-border/50 last:border-0 hover:bg-muted/50 rounded-md transition-colors" onClick={() => navigateTo('detail', r.id)}>
                                     <div className="flex justify-between items-center">
-                                        <div className="font-serif font-medium text-foreground group-hover:text-primary transition-colors truncate pr-6">
-                                            {r.title}
+                                        <div className="flex items-center gap-2 flex-1 min-w-0 pr-6">
+                                            {r.image && <img src={r.image} className="w-6 h-6 rounded-md object-cover border border-border" alt="" />}
+                                            <div className="font-serif font-medium text-foreground group-hover:text-primary transition-colors truncate">
+                                                {r.title}
+                                            </div>
                                         </div>
                                         <button
                                             onClick={(e) => { e.stopPropagation(); onRemoveRecipe(selectedDate, idx); }}

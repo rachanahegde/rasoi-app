@@ -11,10 +11,13 @@ const RecipeDetail = ({
     addToMealPlan,
     handleDeleteRecipe,
     generateVariation,
-    selectedDate
+    selectedDate,
+    mealPlan
 }) => {
     const recipe = recipes.find(r => r.id === activeRecipeId);
     if (!recipe) return <div>Not found</div>;
+
+    const isScheduled = mealPlan && mealPlan[selectedDate.toDateString()]?.includes(activeRecipeId);
 
     return (
         <div className="max-w-4xl mx-auto animate-in zoom-in-95 duration-300 pb-20">
@@ -62,17 +65,22 @@ const RecipeDetail = ({
                     </div>
 
                     <div
-                        onClick={() => addToMealPlan(recipe.id)}
-                        className="p-4 bg-primary text-primary-foreground rounded-lg flex items-center justify-between cursor-pointer hover:bg-primary/90 transition-colors shadow-md border-2 border-primary"
+                        onClick={() => !isScheduled && addToMealPlan(recipe.id, selectedDate)}
+                        className={`p-4 rounded-lg flex items-center justify-between cursor-pointer transition-all shadow-md border-2 ${isScheduled
+                                ? 'bg-green-100 border-green-200 text-green-700 cursor-default'
+                                : 'bg-primary text-primary-foreground border-primary hover:bg-primary/90'
+                            }`}
                     >
                         <div className="flex items-center gap-3">
-                            <CalendarDays className="w-5 h-5 text-primary-foreground" />
+                            {isScheduled ? <Check className="w-5 h-5" /> : <CalendarDays className="w-5 h-5" />}
                             <div className="text-sm">
-                                <div className="font-bold font-serif">Schedule this meal</div>
-                                <div className="text-primary-foreground/80 text-xs italic">For {selectedDate.toLocaleDateString()}</div>
+                                <div className="font-bold font-serif">{isScheduled ? 'On the menu' : 'Schedule this meal'}</div>
+                                <div className={`text-xs italic ${isScheduled ? 'text-green-600' : 'text-primary-foreground/80'}`}>
+                                    For {selectedDate.toLocaleDateString()}
+                                </div>
                             </div>
                         </div>
-                        <Plus className="w-5 h-5" />
+                        {!isScheduled && <Plus className="w-5 h-5" />}
                     </div>
                 </div>
 

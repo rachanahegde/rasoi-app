@@ -6,14 +6,23 @@ import { saveApiKey, hasApiKey, removeApiKey, generateRecipeAction } from '@/app
 import { useToast } from '@/context/ToastContext';
 import { useActivityLog } from '@/context/ActivityLogContext';
 import { suggestTags } from '@/lib/tagSuggestions';
+import { useUser } from '@/context/UserContext';
 
 const GeneratorPage = ({
     aiPrompt,
     setAiPrompt,
     aiIngredients,
     setAiIngredients,
-    handleSaveRecipe
+    handleSaveRecipe,
+    autoStart,
+    setAutoStart
 }) => {
+    const {
+        dietary, cuisines, skillLevel,
+        spiceTolerance, equipment, dislikes,
+        allergies, typicalTime
+    } = useUser();
+
     const [genLoading, setGenLoading] = useState(false);
     const [prompt, setPrompt] = useState(aiPrompt || '');
     const [ingredients, setIngredients] = useState(aiIngredients || '');
@@ -35,6 +44,12 @@ const GeneratorPage = ({
     const [showKeyText, setShowKeyText] = useState(false); // For toggling password visibility
     const [checkingKey, setCheckingKey] = useState(true);
 
+    // Sync state with props if they change
+    useEffect(() => {
+        if (aiPrompt) setPrompt(aiPrompt);
+        if (aiIngredients) setIngredients(aiIngredients);
+    }, [aiPrompt, aiIngredients]);
+
     useEffect(() => {
         checkKeyStatus();
     }, []);
@@ -44,6 +59,14 @@ const GeneratorPage = ({
         setIsKeySet(hasKey);
         setCheckingKey(false);
     };
+
+    // Auto-trigger generation if autoStart is on and key is set
+    useEffect(() => {
+        if (autoStart && isKeySet && !genLoading && prompt && !generated) {
+            handleGenerate();
+            if (setAutoStart) setAutoStart(false); // Consume the autoStart trigger
+        }
+    }, [autoStart, isKeySet, prompt, genLoading, generated]);
 
     const handleSaveKey = async () => {
         if (!keyInput.trim()) return;
@@ -60,7 +83,7 @@ const GeneratorPage = ({
     };
 
     useEffect(() => {
-        return () => { setAiPrompt(''); setAiIngredients(''); }
+        return () => { if (setAiPrompt) setAiPrompt(''); if (setAiIngredients) setAiIngredients(''); }
     }, [setAiPrompt, setAiIngredients]);
 
     const handleGenerate = async () => {
@@ -72,11 +95,23 @@ const GeneratorPage = ({
         setGenerated(null);
         setCustomImage(null); // Reset custom image on new generation
         try {
-            const result = await generateRecipeAction(prompt, ingredients);
+            // Collect user preferences for a personalized prompt
+            const preferences = {
+                dietary,
+                cuisines,
+                skillLevel,
+                spiceTolerance,
+                equipment,
+                dislikes,
+                allergies,
+                typicalTime
+            };
+
+            const result = await generateRecipeAction(prompt, ingredients, preferences);
             setGenerated(result);
             toast.success('✓ AI variation ready! Review and save below.');
             addActivity('variation_generated', `Generated AI variation: ${result.title}`);
-            
+
             // Use tags directly from AI response
             if (result.tags && Array.isArray(result.tags)) {
                 setSuggestedTags(result.tags);
@@ -124,16 +159,16 @@ const GeneratorPage = ({
         try {
             const response = await fetch(urlInput);
             if (!response.ok) throw new Error('Failed to fetch image');
-            
+
             const blob = await response.blob();
-            
+
             // Check file size
             if (blob.size > 5 * 1024 * 1024) {
                 toast.error('✗ Image size should be less than 5MB');
                 setLoadingImage(false);
                 return;
             }
-            
+
             const reader = new FileReader();
             reader.onloadend = () => {
                 setCustomImage(reader.result);
@@ -456,12 +491,12 @@ const GeneratorPage = ({
                             {/* Tags Section */}
                             <div className="border-t border-border pt-6">
                                 <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-3">Tags & Categories</h4>
-                                
+
                                 {/* Display current tags as badges */}
                                 {customTags && (
                                     <div className="flex flex-wrap gap-2 mb-3">
                                         {customTags.split(',').map(t => t.trim()).filter(t => t).map((tag, idx) => (
-                                            <span 
+                                            <span
                                                 key={idx}
                                                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20"
                                             >
@@ -481,14 +516,14 @@ const GeneratorPage = ({
                                         ))}
                                     </div>
                                 )}
-                                
-                                
+
+
                                 {/* Input for tags */}
-                                <Input 
-                                    value={customTags} 
-                                    onChange={e => setCustomTags(e.target.value)} 
-                                    placeholder="Type tags separated by commas..." 
-                                    className="bg-muted mb-3 text-sm" 
+                                <Input
+                                    value={customTags}
+                                    onChange={e => setCustomTags(e.target.value)}
+                                    placeholder="Type tags separated by commas..."
+                                    className="bg-muted mb-3 text-sm"
                                 />
                             </div>
 

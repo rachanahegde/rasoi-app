@@ -1,10 +1,12 @@
+'use client';
 import React from 'react';
-import { Sparkles, CalendarDays, X, Heart, ChevronRight } from 'lucide-react';
+import { Sparkles, X, Heart, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import RecipeCard from '@/components/RecipeCard';
 import WeeklyCalendar from '@/components/WeeklyCalendar';
 import RecentlyCooked from '@/components/RecentlyCooked';
 import MealPrepSuggestions from '@/components/MealPrepSuggestions';
+import { useUser } from '@/context/UserContext';
 
 const Dashboard = ({
     recipes,
@@ -17,6 +19,7 @@ const Dashboard = ({
     addToMealPlan,
     setSearchQuery
 }) => {
+    const { chefName } = useUser();
     const today = new Date();
     const currentDay = today.getDay() === 0 ? 7 : today.getDay();
     const weekDays = Array.from({ length: 7 }, (_, i) => {
@@ -29,13 +32,20 @@ const Dashboard = ({
     const todaysMeals = mealPlan[selectedDateKey] || [];
     const favoriteRecipes = recipes.filter(r => r.favorite);
 
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return "Good morning";
+        if (hour < 17) return "Good afternoon";
+        return "Good evening";
+    };
+
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Header - Handwritten Style */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-6 border-b-2 border-dashed border-border">
                 <div>
                     <div className="flex items-center gap-2 text-muted-foreground mb-1 font-medium font-serif italic">
-                        <span>Good morning, Rachana</span>
+                        <span>{getGreeting()}, {chefName}</span>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-serif text-foreground leading-tight">
                         <span className="text-muted-foreground font-light">Welcome to</span> Rasoi
